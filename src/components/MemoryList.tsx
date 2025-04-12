@@ -5,6 +5,7 @@ import { Memory } from '@/schemas/memory';
 import MemoryCard from './MemoryCard';
 import MemoryModal from './MemoryModal';
 import { refreshMemories } from '@/app/actions';
+import { useToast } from '@/context/ToastContext';
 
 type MemoryListProps = {
   initialMemories: Memory[];
@@ -15,6 +16,7 @@ export default function MemoryList({ initialMemories }: MemoryListProps) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedMemory, setSelectedMemory] = useState<Memory | undefined>(undefined);
   const [modalMode, setModalMode] = useState<'create' | 'edit'>('create');
+  const { showToast } = useToast();
 
   useEffect(() => {
     setMemories(Array.isArray(initialMemories) ? initialMemories : []);
@@ -42,9 +44,10 @@ export default function MemoryList({ initialMemories }: MemoryListProps) {
 
       await refreshMemories();
       setMemories(prevMemories => prevMemories.filter(memory => memory.id !== id));
+      showToast('Memory deleted successfully');
     } catch (err) {
       console.error('Error deleting memory:', err);
-      alert('Failed to delete memory. Please try again.');
+      showToast('Failed to delete memory. Please try again.', 'error');
     }
   };
 
@@ -55,6 +58,13 @@ export default function MemoryList({ initialMemories }: MemoryListProps) {
     if (response.ok) {
       const data = await response.json();
       setMemories(Array.isArray(data) ? data : data.memories || []);
+      showToast(
+        modalMode === 'create' 
+          ? 'Memory created successfully' 
+          : 'Memory updated successfully'
+      );
+    } else {
+      showToast('Failed to update memories', 'error');
     }
   };
 

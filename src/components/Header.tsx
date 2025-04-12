@@ -1,16 +1,19 @@
- 'use client';
+'use client';
 
 import { useState } from 'react';
 import { CubeIcon } from '@heroicons/react/24/outline';
 import MemoryModal from './MemoryModal';
 import { refreshMemories } from '@/app/actions';
+import { useToast } from '@/context/ToastContext';
 
 export default function Header() {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const { showToast } = useToast();
 
   const handleMemorySaved = async () => {
     await refreshMemories();
     setIsModalOpen(false);
+    showToast('Memory created successfully', 'success');
   };
 
   return (
