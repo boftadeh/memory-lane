@@ -7,29 +7,31 @@ type MemoryCardProps = {
 };
 
 export default function MemoryCard({ memory, onEdit, onDelete }: MemoryCardProps) {
+  const formattedDate = new Date(memory.timestamp).toLocaleDateString('en-US', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric'
+  });
+
   return (
-    <div className="card bg-base-100 shadow-md">
+    <div className="card bg-base-200 shadow-xl">
       <div className="card-body">
-        <h3 className="card-title">{memory.name}</h3>
+        <h2 className="card-title">{memory.name}</h2>
+        <p className="text-sm opacity-70">{formattedDate}</p>
         <p>{memory.description}</p>
-        <div className="flex justify-between items-center">
-          <span className="text-sm opacity-70">
-            {new Date(memory.timestamp).toLocaleDateString()}
-          </span>
-          <div className="card-actions">
-            <button 
-              className="btn btn-primary btn-sm"
-              onClick={() => onEdit(memory)}
-            >
-              Edit
-            </button>
-            <button 
-              className="btn btn-error btn-sm"
-              onClick={() => onDelete(memory.id!)}
-            >
-              Delete
-            </button>
-          </div>
+        <div className="card-actions justify-end mt-4">
+          <button 
+            className="btn btn-sm" 
+            onClick={() => onEdit(memory)}
+          >
+            Edit
+          </button>
+          <button 
+            className="btn btn-sm btn-error" 
+            onClick={() => memory.id && onDelete(memory.id)}
+          >
+            Delete
+          </button>
         </div>
       </div>
     </div>
