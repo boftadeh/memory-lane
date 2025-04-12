@@ -1,7 +1,6 @@
 import { CubeIcon } from '@heroicons/react/20/solid'
-import './App.css'
 
-function App() {
+export default function Home() {
   return (
     <div>
       <div className='mx-auto max-w-7xl sm:px-6 lg:px-8 mt-32'>
@@ -18,6 +17,4 @@ function App() {
       </div>
     </div>
   )
-}
-
-export default App
+} 
