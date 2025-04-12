@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Memory, MemorySchema } from '@/schemas/memory';
@@ -13,18 +13,21 @@ type MemoryModalProps = {
 };
 
 export default function MemoryModal({ isOpen, onClose, onSave, memory, mode }: MemoryModalProps) {
+  const [imagePreview, setImagePreview] = useState<string | null>(null);
   const { 
     register, 
     handleSubmit, 
     reset, 
     formState: { errors, isSubmitting },
-    setError
+    setError,
+    setValue
   } = useForm<Memory>({
     resolver: zodResolver(MemorySchema),
     defaultValues: {
       name: '',
       description: '',
       timestamp: new Date().toISOString().split('T')[0],
+      image: '',
     },
   });
 
@@ -36,15 +39,32 @@ export default function MemoryModal({ isOpen, onClose, onSave, memory, mode }: M
         name: memory.name,
         description: memory.description,
         timestamp: localDate.toISOString().split('T')[0],
+        image: memory.image || '',
       });
+      setImagePreview(memory.image || null);
     } else {
       reset({
         name: '',
         description: '',
         timestamp: new Date().toISOString().split('T')[0],
+        image: '',
       });
+      setImagePreview(null);
     }
   }, [memory, isOpen, reset]);
+
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        const base64String = reader.result as string;
+        setImagePreview(base64String);
+        setValue('image', base64String);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
 
   const onSubmit = async (data: Memory) => {
     try {
@@ -95,6 +115,32 @@ export default function MemoryModal({ isOpen, onClose, onSave, memory, mode }: M
       subTitle={subTitle}
     >
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+        <div className="form-control">
+          <label className="label">
+            <span className="label-text">Image</span>
+          </label>
+          <input
+            type="file"
+            accept="image/*"
+            onChange={handleImageChange}
+            className="file-input file-input-bordered w-full"
+          />
+          {imagePreview && (
+            <div className="mt-2">
+              <img
+                src={imagePreview}
+                alt="Preview"
+                className="w-32 h-32 object-cover rounded-full"
+              />
+            </div>
+          )}
+          {errors.image && (
+            <label className="label">
+              <span className="label-text-alt text-error">{errors.image.message}</span>
+            </label>
+          )}
+        </div>
+
         <div className="form-control">
           <label className="label">
             <span className="label-text">Name</span>

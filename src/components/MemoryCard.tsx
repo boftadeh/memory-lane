@@ -16,9 +16,22 @@ export default function MemoryCard({ memory, onEdit, onDelete }: MemoryCardProps
   return (
     <div className="card bg-base-200 shadow-xl">
       <div className="card-body">
-        <h2 className="card-title">{memory.name}</h2>
-        <p className="text-sm opacity-70">{formattedDate}</p>
-        <p>{memory.description}</p>
+        <div className="flex items-start gap-4">
+          <div className="avatar">
+            <div className="w-24 h-24 rounded-full">
+              <img 
+                src={memory.image} 
+                alt={memory.name} 
+                className="object-cover"
+              />
+            </div>
+          </div>
+          <div className="flex flex-col flex-1">
+            <h2 className="card-title">{memory.name}</h2>
+            <p className="text-sm opacity-70">{formattedDate}</p>
+            <p className="mt-2">{memory.description}</p>
+          </div>
+        </div>
         <div className="card-actions justify-end mt-4">
           <button 
             className="btn btn-sm" 
