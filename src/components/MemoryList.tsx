@@ -12,14 +12,14 @@ type MemoryListProps = {
 };
 
 export default function MemoryList({ initialMemories }: MemoryListProps) {
-  const [memories, setMemories] = useState<Memory[]>(Array.isArray(initialMemories) ? initialMemories : []);
+  const [memories, setMemories] = useState<Memory[]>(initialMemories);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedMemory, setSelectedMemory] = useState<Memory | undefined>(undefined);
   const [modalMode, setModalMode] = useState<'create' | 'edit'>('create');
   const { showToast } = useToast();
 
   useEffect(() => {
-    setMemories(Array.isArray(initialMemories) ? initialMemories : []);
+    setMemories(initialMemories);
   }, [initialMemories]);
 
   const handleEdit = (memory: Memory) => {
@@ -34,37 +34,32 @@ export default function MemoryList({ initialMemories }: MemoryListProps) {
     }
 
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/memories/${id}`, {
+      await fetch(`${process.env.NEXT_PUBLIC_API_URL}/memories/${id}`, {
         method: 'DELETE',
       });
 
-      if (!response.ok) {
-        throw new Error('Failed to delete memory');
-      }
-
       await refreshMemories();
-      setMemories(prevMemories => prevMemories.filter(memory => memory.id !== id));
       showToast('Memory deleted successfully');
     } catch (err) {
-      console.error('Error deleting memory:', err);
       showToast('Failed to delete memory. Please try again.', 'error');
     }
   };
 
   const handleMemoryUpdated = async () => {
-    setIsModalOpen(false);
-    await refreshMemories();
-    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/memories`);
-    if (response.ok) {
+    try {
+      setIsModalOpen(false);
+      await refreshMemories();
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/memories`);
+      
       const data = await response.json();
-      setMemories(Array.isArray(data) ? data : data.memories || []);
+      setMemories(data.memories);
       showToast(
         modalMode === 'create' 
           ? 'Memory created successfully' 
           : 'Memory updated successfully'
       );
-    } else {
-      showToast('Failed to update memories', 'error');
+    } catch (error) {
+      showToast('Failed to update memories. Please try again.', 'error');
     }
   };
 
