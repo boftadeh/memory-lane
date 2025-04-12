@@ -1,43 +1,30 @@
+'use client';
+
 import { useState, useEffect } from 'react';
 import { Memory } from '@/schemas/memory';
-import MemoryModal from './MemoryModal';
 import MemoryCard from './MemoryCard';
+import MemoryModal from './MemoryModal';
+import { refreshMemories } from '@/app/actions';
 
 type MemoryListProps = {
-  onMemoryUpdated: () => void;
+  initialMemories: Memory[];
 };
 
-export default function MemoryList({ onMemoryUpdated }: MemoryListProps) {
-  const [memories, setMemories] = useState<Memory[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+export default function MemoryList({ initialMemories }: MemoryListProps) {
+  const [memories, setMemories] = useState<Memory[]>(Array.isArray(initialMemories) ? initialMemories : []);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedMemory, setSelectedMemory] = useState<Memory | undefined>(undefined);
   const [modalMode, setModalMode] = useState<'create' | 'edit'>('create');
 
-  const fetchMemories = async () => {
-    setIsLoading(true);
-    setError(null);
-
-    try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/memories`);
-      
-      if (!response.ok) {
-        throw new Error('Failed to fetch memories');
-      }
-      
-      const data = await response.json();
-      setMemories(data.memories);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'An unknown error occurred');
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
   useEffect(() => {
-    fetchMemories();
-  }, []);
+    setMemories(Array.isArray(initialMemories) ? initialMemories : []);
+  }, [initialMemories]);
+
+  const handleEdit = (memory: Memory) => {
+    setSelectedMemory(memory);
+    setModalMode('edit');
+    setIsModalOpen(true);
+  };
 
   const handleDelete = async (id: number) => {
     if (!confirm('Are you sure you want to delete this memory?')) {
@@ -53,94 +40,50 @@ export default function MemoryList({ onMemoryUpdated }: MemoryListProps) {
         throw new Error('Failed to delete memory');
       }
 
-      fetchMemories();
-      onMemoryUpdated();
+      await refreshMemories();
+      setMemories(prevMemories => prevMemories.filter(memory => memory.id !== id));
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'An unknown error occurred');
+      console.error('Error deleting memory:', err);
+      alert('Failed to delete memory. Please try again.');
     }
   };
 
-  const handleEdit = (memory: Memory) => {
-    setSelectedMemory(memory);
-    setModalMode('edit');
-    setIsModalOpen(true);
-  };
-
-  const handleModalClose = () => {
+  const handleMemoryUpdated = async () => {
     setIsModalOpen(false);
-    setSelectedMemory(undefined);
+    await refreshMemories();
+    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/memories`);
+    if (response.ok) {
+      const data = await response.json();
+      setMemories(Array.isArray(data) ? data : data.memories || []);
+    }
   };
 
-  const handleModalSave = () => {
-    fetchMemories();
-    onMemoryUpdated();
-  };
-
-  if (isLoading) {
+  if (!Array.isArray(memories) || memories.length === 0) {
     return (
-      <div className="card bg-base-200 shadow-xl">
-        <div className="card-body">
-          <div className="flex justify-center">
-            <span className="loading loading-spinner loading-lg"></span>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="card bg-base-200 shadow-xl">
-        <div className="card-body">
-          <div className="alert alert-error">
-            <span>{error}</span>
-          </div>
-          <div className="card-actions justify-end">
-            <button className="btn btn-primary" onClick={fetchMemories}>
-              Try Again
-            </button>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  if (memories.length === 0) {
-    return (
-      <div className="card bg-base-200 shadow-xl">
-        <div className="card-body">
-          <h2 className="card-title">Your Memories</h2>
-          <p>No memories found. Create your first memory!</p>
-        </div>
+      <div className="alert">
+        <span>No memories found. Create your first memory!</span>
       </div>
     );
   }
 
   return (
-    <>
-      <div className="card bg-base-200 shadow-xl">
-        <div className="card-body">
-          <h2 className="card-title">Your Memories</h2>
-          <div className="space-y-4">
-            {memories.map((memory) => (
-              <MemoryCard
-                key={memory.id}
-                memory={memory}
-                onEdit={handleEdit}
-                onDelete={handleDelete}
-              />
-            ))}
-          </div>
-        </div>
-      </div>
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      {memories.map((memory) => (
+        <MemoryCard 
+          key={memory.id} 
+          memory={memory} 
+          onEdit={handleEdit}
+          onDelete={handleDelete}
+        />
+      ))}
 
       <MemoryModal 
         isOpen={isModalOpen}
-        onClose={handleModalClose}
-        onSave={handleModalSave}
+        onClose={() => setIsModalOpen(false)}
+        onSave={handleMemoryUpdated}
         memory={selectedMemory}
         mode={modalMode}
       />
-    </>
+    </div>
   );
 } 
