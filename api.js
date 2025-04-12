@@ -1,10 +1,12 @@
 const express = require('express')
 const sqlite3 = require('sqlite3')
+const cors = require('cors')
 
 const app = express()
 const port = 4001
 const db = new sqlite3.Database('memories.db')
 
+app.use(cors())
 app.use(express.json())
 
 db.serialize(() => {
