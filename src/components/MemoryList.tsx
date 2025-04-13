@@ -9,6 +9,7 @@ import { refreshMemories } from '@/app/actions';
 import { useToast } from '@/context/ToastContext';
 import { FunnelIcon } from '@heroicons/react/24/outline';
 import DeleteConfirmationModal from './DeleteConfirmationModal';
+import Dropdown from './Dropdown';
 
 type MemoryListProps = {
   initialMemories: Memory[];
@@ -151,11 +152,47 @@ export default function MemoryList({ initialMemories }: MemoryListProps) {
     </>
   );
 
+  const sortOptions = [
+    {
+      label: 'Newest First',
+      onClick: () => handleSortChange('newest'),
+      isActive: sortOrder === 'newest'
+    },
+    {
+      label: 'Oldest First',
+      onClick: () => handleSortChange('oldest'),
+      isActive: sortOrder === 'oldest'
+    }
+  ];
+
+  const renderHeader = () => (
+    <div className="flex justify-between items-center">
+      <Dropdown
+        trigger={<FunnelIcon className="h-6 w-6" />}
+        options={sortOptions}
+      />
+      <button 
+        className="btn btn-primary"
+        onClick={handleCreateClick}
+      >
+        Create Memory
+      </button>
+    </div>
+  );
+
   if (isLoading) {
     return (
       <div className="container mx-auto px-4 py-8">
         <div className="flex flex-col gap-4 max-w-4xl mx-auto">
+          {renderHeader()}
           {renderSkeletons()}
+          <MemoryModal 
+            isOpen={isModalOpen}
+            onClose={() => setIsModalOpen(false)}
+            onSave={handleMemoryUpdated}
+            memory={selectedMemory}
+            mode={modalMode}
+          />
         </div>
       </div>
     );
@@ -165,25 +202,17 @@ export default function MemoryList({ initialMemories }: MemoryListProps) {
     return (
       <div className="container mx-auto px-4 py-8">
         <div className="flex flex-col gap-4 max-w-4xl mx-auto">
-          <div className="flex justify-end items-center">
-            <button 
-              className="btn btn-primary"
-              onClick={handleCreateClick}
-            >
-              Create Memory
-            </button>
-          </div>
+          {renderHeader()}
           <div className="alert">
             <span>No memories found. Create your first memory!</span>
           </div>
-
-        <MemoryModal 
-          isOpen={isModalOpen}
-          onClose={() => setIsModalOpen(false)}
-          onSave={handleMemoryUpdated}
-          memory={selectedMemory}
-          mode={modalMode}
-        />
+          <MemoryModal 
+            isOpen={isModalOpen}
+            onClose={() => setIsModalOpen(false)}
+            onSave={handleMemoryUpdated}
+            memory={selectedMemory}
+            mode={modalMode}
+          />
         </div>
       </div>
     );
@@ -192,38 +221,7 @@ export default function MemoryList({ initialMemories }: MemoryListProps) {
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="flex flex-col gap-4 max-w-4xl mx-auto">
-        <div className="flex justify-between items-center">
-          <div className="dropdown dropdown-end">
-            <div tabIndex={0} role="button" className="btn btn-ghost btn-circle">
-              <FunnelIcon className="h-6 w-6" />
-            </div>
-            <ul tabIndex={0} className="dropdown-content z-[1] menu p-2 shadow bg-base-200 rounded-box w-52">
-              <li>
-                <button 
-                  onClick={() => handleSortChange('newest')}
-                  className={sortOrder === 'newest' ? 'active' : ''}
-                >
-                  Newest First
-                </button>
-              </li>
-              <li>
-                <button 
-                  onClick={() => handleSortChange('oldest')}
-                  className={sortOrder === 'oldest' ? 'active' : ''}
-                >
-                  Oldest First
-                </button>
-              </li>
-            </ul>
-          </div>
-          <button 
-            className="btn btn-primary"
-            onClick={handleCreateClick}
-          >
-            Create Memory
-          </button>
-        </div>
-
+        {renderHeader()}
         {memories.map((memory, index) => (
           <div key={memory.id} className="flex flex-col items-center">
             <MemoryCard 
