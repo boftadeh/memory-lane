@@ -72,14 +72,22 @@ export default function MemoryList({ initialMemories }: MemoryListProps) {
   }
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-      {memories.map((memory) => (
-        <MemoryCard 
-          key={memory.id} 
-          memory={memory} 
-          onEdit={handleEdit}
-          onDelete={handleDelete}
-        />
+    <div className="flex flex-col gap-4 max-w-4xl mx-auto">
+      {memories.map((memory, index) => (
+        <div key={memory.id} className="flex flex-col items-center">
+          <MemoryCard 
+            memory={memory} 
+            onEdit={handleEdit}
+            onDelete={handleDelete}
+          />
+          {index < memories.length - 1 && (
+            <div className="flex flex-col items-center gap-2 mt-6">
+              <div className="w-2 h-2 rounded-full bg-base-content"></div>
+              <div className="w-2 h-2 rounded-full bg-base-content"></div>
+              <div className="w-2 h-2 rounded-full bg-base-content"></div>
+            </div>
+          )}
+        </div>
       ))}
 
       <MemoryModal 

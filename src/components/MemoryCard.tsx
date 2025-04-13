@@ -1,5 +1,6 @@
 import { Memory } from '@/schemas/memory';
 import Image from 'next/image';
+import { EllipsisVerticalIcon } from '@heroicons/react/24/outline';
 
 type MemoryCardProps = {
   memory: Memory;
@@ -15,7 +16,7 @@ export default function MemoryCard({ memory, onEdit, onDelete }: MemoryCardProps
   });
 
   return (
-    <div className="card bg-base-200 shadow-xl">
+    <div className="card bg-base-200 shadow-xl w-full max-w-2xl">
       <div className="card-body">
         <div className="flex items-start gap-4">
           <div className="avatar">
@@ -29,24 +30,32 @@ export default function MemoryCard({ memory, onEdit, onDelete }: MemoryCardProps
             </div>
           </div>
           <div className="flex flex-col flex-1">
-            <h2 className="card-title">{memory.name}</h2>
-            <p className="text-sm opacity-70">{formattedDate}</p>
+            <div className="flex justify-between items-start">
+              <div>
+                <h2 className="card-title">{memory.name}</h2>
+                <p className="text-sm opacity-70">{formattedDate}</p>
+              </div>
+              <div className="dropdown dropdown-end">
+                <div tabIndex={0} role="button" className="btn btn-ghost btn-circle">
+                  <EllipsisVerticalIcon className="h-6 w-6" />
+                </div>
+                <ul tabIndex={0} className="dropdown-content z-[1] menu p-2 shadow bg-base-200 rounded-box w-52">
+                  <li>
+                    <button onClick={() => onEdit(memory)}>Edit</button>
+                  </li>
+                  <li>
+                    <button 
+                      onClick={() => memory.id && onDelete(memory.id)}
+                      className="text-error"
+                    >
+                      Delete
+                    </button>
+                  </li>
+                </ul>
+              </div>
+            </div>
             <p className="mt-2">{memory.description}</p>
           </div>
-        </div>
-        <div className="card-actions justify-end mt-4">
-          <button 
-            className="btn btn-sm" 
-            onClick={() => onEdit(memory)}
-          >
-            Edit
-          </button>
-          <button 
-            className="btn btn-sm btn-error" 
-            onClick={() => memory.id && onDelete(memory.id)}
-          >
-            Delete
-          </button>
         </div>
       </div>
     </div>
