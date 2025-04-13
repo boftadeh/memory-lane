@@ -141,6 +141,7 @@ export default function MemoryModal({ isOpen, onClose, onSave, memory, mode }: M
               <textarea
                 className="textarea h-24 resize-none w-full text-base-content"
                 placeholder="Enter memory description"
+                maxLength={700}
                 {...register('description')}
               />
               {errors.description && (

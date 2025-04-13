@@ -130,27 +130,7 @@ export default function MemoryList({ initialMemories }: MemoryListProps) {
 
   const handleSortChange = (order: 'newest' | 'oldest') => {
     setSortOrder(order);
-    if (document.activeElement instanceof HTMLElement) {
-      document.activeElement.blur();
-    }
   };
-
-  const renderSkeletons = () => (
-    <>
-      {[1, 2, 3].map((index) => (
-        <div key={index} className="flex flex-col items-center">
-          <MemorySkeleton />
-          {index < 3 && (
-            <div className="flex flex-col items-center gap-2 mt-6">
-              <div className="w-2 h-2 rounded-full bg-base-content"></div>
-              <div className="w-2 h-2 rounded-full bg-base-content"></div>
-              <div className="w-2 h-2 rounded-full bg-base-content"></div>
-            </div>
-          )}
-        </div>
-      ))}
-    </>
-  );
 
   const sortOptions = [
     {
@@ -168,7 +148,7 @@ export default function MemoryList({ initialMemories }: MemoryListProps) {
   const renderHeader = () => (
     <div className="flex justify-between items-center">
       <Dropdown
-        trigger={<FunnelIcon className="h-6 w-6" />}
+        actionIcon={<FunnelIcon className="h-6 w-6" />}
         options={sortOptions}
       />
       <button 
@@ -178,6 +158,23 @@ export default function MemoryList({ initialMemories }: MemoryListProps) {
         Create Memory
       </button>
     </div>
+  );
+
+  const renderSkeletons = () => (
+    <>
+      {[1, 2, 3].map((index) => (
+        <div key={index} className="flex flex-col items-center">
+          <MemorySkeleton />
+          {index < 3 && (
+            <div className="flex flex-col items-center gap-2 mt-6 animate-pulse">
+              <div className="w-2 h-2 rounded-full bg-base-content opacity-40"></div>
+              <div className="w-2 h-2 rounded-full bg-base-content opacity-40"></div>
+              <div className="w-2 h-2 rounded-full bg-base-content opacity-40"></div>
+            </div>
+          )}
+        </div>
+      ))}
+    </>
   );
 
   if (isLoading) {
