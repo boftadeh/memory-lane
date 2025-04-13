@@ -23,4 +23,22 @@ export async function getMemories(): Promise<Memory[]> {
 
 export async function refreshMemories() {
   revalidatePath('/');
+}
+
+export async function deleteMemory(id: string) {
+  try {
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
+    const response = await fetch(`${apiUrl}/memories/${id}`, {
+      method: 'DELETE',
+    });
+
+    if (!response.ok) {
+      throw new Error(`Failed to delete memory: ${response.status} ${response.statusText}`);
+    }
+
+    return true;
+  } catch (error) {
+    console.error('Error deleting memory:', error);
+    throw error;
+  }
 } 

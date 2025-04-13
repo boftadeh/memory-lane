@@ -5,27 +5,25 @@ import { Memory } from '@/schemas/memory';
 import MemoryCard from './MemoryCard';
 import MemoryModal from './MemoryModal';
 import MemorySkeleton from './MemorySkeleton';
-import { refreshMemories } from '@/app/actions';
+import { refreshMemories, deleteMemory } from '@/app/actions';
 import { useToast } from '@/context/ToastContext';
-import { FunnelIcon } from '@heroicons/react/24/outline';
 import DeleteConfirmationModal from './DeleteConfirmationModal';
-import Dropdown from './Dropdown';
 
 type MemoryListProps = {
   initialMemories: Memory[];
 };
 
 export default function MemoryList({ initialMemories }: MemoryListProps) {
-  const [memories, setMemories] = useState<Memory[]>([]);
+  const [memories, setMemories] = useState<Memory[]>(initialMemories);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedMemory, setSelectedMemory] = useState<Memory | undefined>(undefined);
   const [modalMode, setModalMode] = useState<'create' | 'edit'>('create');
   const [sortOrder, setSortOrder] = useState<'newest' | 'oldest'>('oldest');
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
   const [isInitialLoad, setIsInitialLoad] = useState(true);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
-  const [memoryToDelete, setMemoryToDelete] = useState<Memory | null>(null);
-  const [isDeleting, setIsDeleting] = useState(false);
+  const [memoryToDelete, setMemoryToDelete] = useState<Memory | undefined>(undefined);
+  const [isDeletingMemory, setIsDeletingMemory] = useState(false);
   const { showToast } = useToast();
 
   useEffect(() => {
@@ -61,42 +59,26 @@ export default function MemoryList({ initialMemories }: MemoryListProps) {
     setIsModalOpen(true);
   };
 
-  const handleDelete = async (memory: Memory) => {
-    setMemoryToDelete(memory);
-    setIsDeleteModalOpen(true);
-  };
-
-  const handleDeleteConfirm = async () => {
+  const handleDelete = async () => {
     if (!memoryToDelete) return;
-
+    
     try {
-      setIsDeleting(true);
+      setIsDeletingMemory(true);
       setIsLoading(true);
       
-      await fetch(`${process.env.NEXT_PUBLIC_API_URL}/memories/${memoryToDelete.id}`, {
-        method: 'DELETE',
-      });
-
+      await deleteMemory(memoryToDelete.id);
       await refreshMemories();
       
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/memories`);
-      const data = await response.json();
-      
-      const sortedMemories = [...data.memories].sort((a, b) => {
-        const dateA = new Date(a.timestamp).getTime();
-        const dateB = new Date(b.timestamp).getTime();
-        return sortOrder === 'newest' ? dateB - dateA : dateA - dateB;
-      });
-      
-      setMemories(sortedMemories);
+      const updatedMemories = memories.filter(m => m.id !== memoryToDelete.id);
+      setMemories(updatedMemories);
       
       showToast('Memory deleted successfully');
       setIsDeleteModalOpen(false);
-      setMemoryToDelete(null);
+      setMemoryToDelete(undefined);
     } catch (err) {
       showToast('Failed to delete memory. Please try again.', 'error');
     } finally {
-      setIsDeleting(false);
+      setIsDeletingMemory(false);
       setIsLoading(false);
     }
   };
@@ -128,29 +110,20 @@ export default function MemoryList({ initialMemories }: MemoryListProps) {
     setIsModalOpen(true);
   };
 
-  const handleSortChange = (order: 'newest' | 'oldest') => {
-    setSortOrder(order);
+  const handleSortChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    setSortOrder(event.target.value as 'newest' | 'oldest');
   };
-
-  const sortOptions = [
-    {
-      label: 'Newest First',
-      onClick: () => handleSortChange('newest'),
-      isActive: sortOrder === 'newest'
-    },
-    {
-      label: 'Oldest First',
-      onClick: () => handleSortChange('oldest'),
-      isActive: sortOrder === 'oldest'
-    }
-  ];
 
   const renderHeader = () => (
     <div className="flex justify-between items-center">
-      <Dropdown
-        actionIcon={<FunnelIcon className="h-6 w-6" />}
-        options={sortOptions}
-      />
+      <select
+        className="select select-bordered w-[200px]"
+        value={sortOrder}
+        onChange={handleSortChange}
+      >
+        <option value="oldest">Oldest to Newest</option>
+        <option value="newest">Newest to Oldest</option>
+      </select>
       <button 
         className="btn btn-primary"
         onClick={handleCreateClick}
@@ -247,11 +220,11 @@ export default function MemoryList({ initialMemories }: MemoryListProps) {
           isOpen={isDeleteModalOpen}
           onClose={() => {
             setIsDeleteModalOpen(false);
-            setMemoryToDelete(null);
+            setMemoryToDelete(undefined);
           }}
-          onConfirm={handleDeleteConfirm}
+          onConfirm={handleDelete}
+          isDeleting={isDeletingMemory}
           memoryName={memoryToDelete?.name || ''}
-          isDeleting={isDeleting}
         />
       </div>
     </div>
