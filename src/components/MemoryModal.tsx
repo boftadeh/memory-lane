@@ -5,6 +5,7 @@ import { Memory, MemorySchema } from '@/schemas/memory';
 import Modal from './Modal';
 import Image from 'next/image';
 import { XMarkIcon } from '@heroicons/react/24/outline';
+import { createMemory, updateMemory } from '@/app/actions';
 
 type MemoryModalProps = {
   isOpen: boolean;
@@ -74,28 +75,10 @@ export default function MemoryModal({ isOpen, onClose, onSave, memory, mode }: M
 
   const onSubmit = async (data: Memory) => {
     try {
-      const date = new Date(data.timestamp);
-      const adjustedDate = new Date(date.getTime() + date.getTimezoneOffset() * 60000);
-      
-      const memoryData = {
-        ...data,
-        timestamp: adjustedDate.toISOString(),
-      };
-
-      const url = mode === 'create' 
-        ? `${process.env.NEXT_PUBLIC_API_URL}/memories`
-        : `${process.env.NEXT_PUBLIC_API_URL}/memories/${memory?.id}`;
-      
-      const response = await fetch(url, {
-        method: mode === 'create' ? 'POST' : 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(memoryData),
-      });
-
-      if (!response.ok) {
-        throw new Error(`Failed to ${mode} memory`);
+      if (mode === 'create') {
+        await createMemory(data);
+      } else if (memory?.id) {
+        await updateMemory(memory.id, data);
       }
 
       onSave();

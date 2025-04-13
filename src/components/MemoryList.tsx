@@ -5,7 +5,7 @@ import { Memory } from '@/schemas/memory';
 import MemoryCard from './MemoryCard';
 import MemoryModal from './MemoryModal';
 import MemorySkeleton from './MemorySkeleton';
-import { refreshMemories, deleteMemory } from '@/app/actions';
+import { refreshMemories, deleteMemory, getMemories } from '@/app/actions';
 import { useToast } from '@/context/ToastContext';
 import DeleteConfirmationModal from './DeleteConfirmationModal';
 
@@ -53,6 +53,11 @@ export default function MemoryList({ initialMemories }: MemoryListProps) {
     };
   }, [sortOrder, initialMemories, isInitialLoad]);
 
+  const handleDeleteClick = (memory: Memory) => {
+    setMemoryToDelete(memory);
+    setIsDeleteModalOpen(true);
+  };
+
   const handleEdit = (memory: Memory) => {
     setSelectedMemory(memory);
     setModalMode('edit');
@@ -60,7 +65,7 @@ export default function MemoryList({ initialMemories }: MemoryListProps) {
   };
 
   const handleDelete = async () => {
-    if (!memoryToDelete) return;
+    if (!memoryToDelete?.id) return;
     
     try {
       setIsDeletingMemory(true);
@@ -88,10 +93,8 @@ export default function MemoryList({ initialMemories }: MemoryListProps) {
       setIsModalOpen(false);
       setIsLoading(true);
       await refreshMemories();
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/memories`);
-      
-      const data = await response.json();
-      setMemories(data.memories);
+      const updatedMemories = await getMemories();
+      setMemories(updatedMemories);
       showToast(
         modalMode === 'create' 
           ? 'Memory created successfully' 
@@ -197,7 +200,7 @@ export default function MemoryList({ initialMemories }: MemoryListProps) {
             <MemoryCard 
               memory={memory} 
               onEdit={handleEdit}
-              onDelete={handleDelete}
+              onDelete={handleDeleteClick}
             />
             {index < memories.length - 1 && (
               <div className="flex flex-col items-center gap-2 mt-6">
