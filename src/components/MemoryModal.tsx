@@ -171,8 +171,13 @@ export default function MemoryModal({ isOpen, onClose, onSave, memory, mode }: M
               {imagePreview && (
                 <div className="mt-2">
                   <div className="avatar">
-                    <div className="w-24 h-24 rounded-full">
-                      <img src={imagePreview} alt="Preview" className="object-cover" />
+                    <div className="w-24 h-24 rounded-full relative">
+                      <Image
+                        src={imagePreview}
+                        alt="Preview"
+                        fill
+                        className="object-cover"
+                      />
                     </div>
                   </div>
                 </div>
