@@ -8,6 +8,7 @@ import MemorySkeleton from './MemorySkeleton';
 import { refreshMemories } from '@/app/actions';
 import { useToast } from '@/context/ToastContext';
 import { FunnelIcon } from '@heroicons/react/24/outline';
+import DeleteConfirmationModal from './DeleteConfirmationModal';
 
 type MemoryListProps = {
   initialMemories: Memory[];
@@ -21,6 +22,9 @@ export default function MemoryList({ initialMemories }: MemoryListProps) {
   const [sortOrder, setSortOrder] = useState<'newest' | 'oldest'>('oldest');
   const [isLoading, setIsLoading] = useState(true);
   const [isInitialLoad, setIsInitialLoad] = useState(true);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [memoryToDelete, setMemoryToDelete] = useState<Memory | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
   const { showToast } = useToast();
 
   useEffect(() => {
@@ -56,20 +60,43 @@ export default function MemoryList({ initialMemories }: MemoryListProps) {
     setIsModalOpen(true);
   };
 
-  const handleDelete = async (id: number) => {
-    if (!confirm('Are you sure you want to delete this memory?')) {
-      return;
-    }
+  const handleDelete = async (memory: Memory) => {
+    setMemoryToDelete(memory);
+    setIsDeleteModalOpen(true);
+  };
+
+  const handleDeleteConfirm = async () => {
+    if (!memoryToDelete) return;
 
     try {
-      await fetch(`${process.env.NEXT_PUBLIC_API_URL}/memories/${id}`, {
+      setIsDeleting(true);
+      setIsLoading(true);
+      
+      await fetch(`${process.env.NEXT_PUBLIC_API_URL}/memories/${memoryToDelete.id}`, {
         method: 'DELETE',
       });
 
       await refreshMemories();
+      
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/memories`);
+      const data = await response.json();
+      
+      const sortedMemories = [...data.memories].sort((a, b) => {
+        const dateA = new Date(a.timestamp).getTime();
+        const dateB = new Date(b.timestamp).getTime();
+        return sortOrder === 'newest' ? dateB - dateA : dateA - dateB;
+      });
+      
+      setMemories(sortedMemories);
+      
       showToast('Memory deleted successfully');
+      setIsDeleteModalOpen(false);
+      setMemoryToDelete(null);
     } catch (err) {
       showToast('Failed to delete memory. Please try again.', 'error');
+    } finally {
+      setIsDeleting(false);
+      setIsLoading(false);
     }
   };
 
@@ -266,6 +293,16 @@ export default function MemoryList({ initialMemories }: MemoryListProps) {
           onSave={handleMemoryUpdated}
           memory={selectedMemory}
           mode={modalMode}
+        />
+        <DeleteConfirmationModal
+          isOpen={isDeleteModalOpen}
+          onClose={() => {
+            setIsDeleteModalOpen(false);
+            setMemoryToDelete(null);
+          }}
+          onConfirm={handleDeleteConfirm}
+          memoryName={memoryToDelete?.name || ''}
+          isDeleting={isDeleting}
         />
       </div>
     </div>

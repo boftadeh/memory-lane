@@ -5,7 +5,7 @@ import { EllipsisVerticalIcon } from '@heroicons/react/24/outline';
 type MemoryCardProps = {
   memory: Memory;
   onEdit: (memory: Memory) => void;
-  onDelete: (id: number) => void;
+  onDelete: (memory: Memory) => void;
 };
 
 export default function MemoryCard({ memory, onEdit, onDelete }: MemoryCardProps) {
@@ -45,7 +45,7 @@ export default function MemoryCard({ memory, onEdit, onDelete }: MemoryCardProps
                   </li>
                   <li>
                     <button 
-                      onClick={() => memory.id && onDelete(memory.id)}
+                      onClick={() => onDelete(memory)}
                       className="text-error"
                     >
                       Delete
