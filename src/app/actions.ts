@@ -1,106 +1,83 @@
-'use server';
+'use server'
 
-import { Memory } from '@/schemas/memory';
-import { revalidatePath } from 'next/cache';
+import { Memory } from '@/schemas/memory'
+import { revalidatePath } from 'next/cache'
+
+const API_URL = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:3001'
+
+async function apiFetch<T>(path: string, options?: RequestInit): Promise<T> {
+  const res = await fetch(`${API_URL}${path}`, {
+    headers: { 'Content-Type': 'application/json' },
+    ...options,
+  })
+
+  if (!res.ok) {
+    const message = `API error ${res.status}: ${res.statusText}`
+    console.error(message)
+    throw new Error(message)
+  }
+
+  return res.json()
+}
 
 export async function getMemories(): Promise<Memory[]> {
   try {
-    const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
-    const response = await fetch(`${apiUrl}/memories`);
-    
-    if (!response.ok) {
-      console.error('Failed to fetch memories:', response.status, response.statusText);
-      return [];
-    }
-    
-    const data = await response.json();
-    return Array.isArray(data) ? data : data.memories || [];
+    const data = await apiFetch<Memory[] | { memories: Memory[] }>('/memories')
+    return Array.isArray(data) ? data : data.memories ?? []
   } catch (error) {
-    console.error('Error fetching memories:', error);
-    return [];
+    console.error('Error fetching memories:', error)
+    return []
   }
 }
 
 export async function refreshMemories() {
-  revalidatePath('/');
+  revalidatePath('/')
 }
 
-export async function deleteMemory(id: number) {
+export async function deleteMemory(id: number): Promise<{ success: boolean; error?: string }> {
   try {
-    const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
-    const response = await fetch(`${apiUrl}/memories/${id}`, {
-      method: 'DELETE',
-    });
-
-    if (!response.ok) {
-      throw new Error(`Failed to delete memory: ${response.status} ${response.statusText}`);
-    }
-
-    return true;
+    await apiFetch(`/memories/${id}`, { method: 'DELETE' })
+    revalidatePath('/')
+    return { success: true }
   } catch (error) {
-    console.error('Error deleting memory:', error);
-    throw error;
+    return { success: false, error: (error as Error).message }
   }
 }
 
-export async function createMemory(data: Memory): Promise<boolean> {
+export async function createMemory(data: Memory): Promise<{ success: boolean; error?: string }> {
   try {
-    const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
-    const date = new Date(data.timestamp);
-    const adjustedDate = new Date(date.getTime() + date.getTimezoneOffset() * 60000);
-    
     const memoryData = {
       ...data,
-      timestamp: adjustedDate.toISOString(),
-    };
+      timestamp: new Date(data.timestamp).toISOString(),
+    }
 
-    const response = await fetch(`${apiUrl}/memories`, {
+    await apiFetch('/memories', {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
       body: JSON.stringify(memoryData),
-    });
+    })
 
-    if (!response.ok) {
-      throw new Error(`Failed to create memory: ${response.status} ${response.statusText}`);
-    }
-
-    revalidatePath('/');
-    return true;
+    revalidatePath('/')
+    return { success: true }
   } catch (error) {
-    console.error('Error creating memory:', error);
-    throw error;
+    return { success: false, error: (error as Error).message }
   }
 }
 
-export async function updateMemory(id: number, data: Memory): Promise<boolean> {
+export async function updateMemory(id: number, data: Memory): Promise<{ success: boolean; error?: string }> {
   try {
-    const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
-    const date = new Date(data.timestamp);
-    const adjustedDate = new Date(date.getTime() + date.getTimezoneOffset() * 60000);
-    
     const memoryData = {
       ...data,
-      timestamp: adjustedDate.toISOString(),
-    };
-
-    const response = await fetch(`${apiUrl}/memories/${id}`, {
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(memoryData),
-    });
-
-    if (!response.ok) {
-      throw new Error(`Failed to update memory: ${response.status} ${response.statusText}`);
+      timestamp: new Date(data.timestamp).toISOString(),
     }
 
-    revalidatePath('/');
-    return true;
+    await apiFetch(`/memories/${id}`, {
+      method: 'PUT',
+      body: JSON.stringify(memoryData),
+    })
+
+    revalidatePath('/')
+    return { success: true }
   } catch (error) {
-    console.error('Error updating memory:', error);
-    throw error;
+    return { success: false, error: (error as Error).message }
   }
-} 
+}
