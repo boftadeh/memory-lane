@@ -29,10 +29,10 @@ export default function MemoryCard({ memory, onEdit, onDelete }: MemoryCardProps
   ];
 
   return (
-    <div className="card bg-base-200 shadow-xl w-full max-w-2xl">
+    <div className="card bg-base-200 shadow-xl w-full min-h-[150px] max-w-2xl">
       <div className="card-body">
         <div className="flex items-start gap-4">
-          <div className="avatar">
+          <div className="avatar flex-shrink-0">
             <div className="w-24 h-24 rounded-full relative">
               <Image 
                 src={memory.image} 
@@ -42,18 +42,20 @@ export default function MemoryCard({ memory, onEdit, onDelete }: MemoryCardProps
               />
             </div>
           </div>
-          <div className="flex flex-col flex-1 overflow-hidden line-clamp-5 max-h-60">
-            <div className="flex justify-between items-start">
-              <div>
-                <h2 className="card-title">{memory.name}</h2>
+          <div className="flex-1 min-w-0">
+            <div className="flex justify-between items-start gap-4">
+              <div className="min-w-0">
+                <h2 className="card-title truncate">{memory.name}</h2>
                 <p className="text-sm opacity-70">{formattedDate}</p>
               </div>
-              <Dropdown
-                actionIcon={<EllipsisVerticalIcon className="h-6 w-6" />}
-                options={dropdownOptions}
-              />
+              <div className="flex-shrink-0">
+                <Dropdown
+                  actionIcon={<EllipsisVerticalIcon className="h-6 w-6" />}
+                  options={dropdownOptions}
+                />
+              </div>
             </div>
-            <p className="mt-2">{memory.description}</p>
+            <p className="mt-2 line-clamp-3">{memory.description}</p>
           </div>
         </div>
       </div>
