@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { CubeIcon, ShareIcon, EllipsisVerticalIcon, PencilIcon   } from '@heroicons/react/24/outline';
+import { CubeIcon, ShareIcon, EllipsisVerticalIcon, PencilIcon } from '@heroicons/react/24/outline';
 import { useToast } from '@/context/ToastContext';
 import DescriptionModal from './DescriptionModal';
 import Dropdown from './Dropdown';

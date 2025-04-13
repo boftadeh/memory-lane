@@ -29,7 +29,7 @@ export default function MemoryCard({ memory, onEdit, onDelete }: MemoryCardProps
   ];
 
   return (
-    <div className="card bg-base-200 shadow-xl w-full min-h-[150px] max-w-2xl">
+    <div className="card bg-base-200 shadow-xl w-full min-h-[175px] max-w-2xl">
       <div className="card-body">
         <div className="flex items-start gap-4">
           <div className="avatar flex-shrink-0">

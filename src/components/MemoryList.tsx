@@ -8,6 +8,7 @@ import MemorySkeleton from './MemorySkeleton';
 import { refreshMemories, deleteMemory, getMemories } from '@/app/actions';
 import { useToast } from '@/context/ToastContext';
 import DeleteConfirmationModal from './DeleteConfirmationModal';
+import { PlusIcon } from '@heroicons/react/24/solid';
 
 type MemoryListProps = {
   initialMemories: Memory[];
@@ -131,6 +132,7 @@ export default function MemoryList({ initialMemories }: MemoryListProps) {
         className="btn btn-outline  btn-primary"
         onClick={handleCreateClick}
       >
+        <PlusIcon className="w-5 h-5" />
         New memory
       </button>
     </div>
