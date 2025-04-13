@@ -121,7 +121,7 @@ export default function MemoryModal({ isOpen, onClose, onSave, memory, mode }: M
               Name
               <input
                 type="text"
-                className="input w-full "
+                className="input w-full text-base-content"
                 placeholder="Enter memory name"
                 {...register('name')}
               />
@@ -133,7 +133,7 @@ export default function MemoryModal({ isOpen, onClose, onSave, memory, mode }: M
             <label className="fieldset-label flex flex-col items-start w-full gap-2">
               Description
               <textarea
-                className="textarea h-24 resize-none w-full"
+                className="textarea h-24 resize-none w-full text-base-content"
                 placeholder="Enter memory description"
                 {...register('description')}
               />
@@ -146,7 +146,7 @@ export default function MemoryModal({ isOpen, onClose, onSave, memory, mode }: M
               Date
               <input
                 type="date"
-                className="input w-full"
+                className="input w-full text-base-content"
                 {...register('timestamp')}
                 max={new Date().toISOString().split('T')[0]}
               />
@@ -159,7 +159,7 @@ export default function MemoryModal({ isOpen, onClose, onSave, memory, mode }: M
               Image
               <input
                 type="file"
-                className="file-input w-full"
+                className="file-input w-full text-base-content"
                 accept="image/*"
                 onChange={handleImageChange}
               />
