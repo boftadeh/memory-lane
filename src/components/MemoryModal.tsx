@@ -21,7 +21,8 @@ export default function MemoryModal({ isOpen, onClose, onSave, memory, mode }: M
     reset, 
     formState: { errors, isSubmitting },
     setError,
-    setValue
+    setValue,
+    clearErrors
   } = useForm<Memory>({
     resolver: zodResolver(MemorySchema),
     defaultValues: {
@@ -59,9 +60,9 @@ export default function MemoryModal({ isOpen, onClose, onSave, memory, mode }: M
     if (file) {
       const reader = new FileReader();
       reader.onloadend = () => {
-        const base64String = reader.result as string;
-        setImagePreview(base64String);
-        setValue('image', base64String);
+        setImagePreview(reader.result as string);
+        setValue('image', reader.result as string);
+        clearErrors('image');
       };
       reader.readAsDataURL(file);
     }
@@ -168,13 +169,12 @@ export default function MemoryModal({ isOpen, onClose, onSave, memory, mode }: M
                 <p className="text-error text-sm">{errors.image.message}</p>
               )}
               {imagePreview && (
-                <div className="mt-2 relative w-full h-48">
-                  <Image
-                    src={imagePreview}
-                    alt="Preview"
-                    fill
-                    className="object-contain rounded-lg"
-                  />
+                <div className="mt-2">
+                  <div className="avatar">
+                    <div className="w-24 h-24 rounded-full">
+                      <img src={imagePreview} alt="Preview" className="object-cover" />
+                    </div>
+                  </div>
                 </div>
               )}
             </label>
