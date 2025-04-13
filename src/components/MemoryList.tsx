@@ -19,7 +19,7 @@ export default function MemoryList({ initialMemories }: MemoryListProps) {
   const [selectedMemory, setSelectedMemory] = useState<Memory | undefined>(undefined);
   const [modalMode, setModalMode] = useState<'create' | 'edit'>('create');
   const [sortOrder, setSortOrder] = useState<'newest' | 'oldest'>('oldest');
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const [isInitialLoad, setIsInitialLoad] = useState(true);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [memoryToDelete, setMemoryToDelete] = useState<Memory | undefined>(undefined);
@@ -128,10 +128,10 @@ export default function MemoryList({ initialMemories }: MemoryListProps) {
         <option value="newest">Newest to Oldest</option>
       </select>
       <button 
-        className="btn btn-primary"
+        className="btn btn-outline  btn-primary"
         onClick={handleCreateClick}
       >
-        Create Memory
+        New memory
       </button>
     </div>
   );
