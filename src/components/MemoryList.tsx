@@ -9,6 +9,8 @@ import { refreshMemories, deleteMemory, getMemories } from '@/app/actions';
 import { useToast } from '@/context/ToastContext';
 import DeleteConfirmationModal from './DeleteConfirmationModal';
 import { PlusIcon } from '@heroicons/react/24/solid';
+import TagSelector from './TagSelector';
+import { Tag } from '@/types/tags';
 
 type MemoryListProps = {
   initialMemories: Memory[];
@@ -16,10 +18,12 @@ type MemoryListProps = {
 
 export default function MemoryList({ initialMemories }: MemoryListProps) {
   const [memories, setMemories] = useState<Memory[]>(initialMemories);
+  const [filteredMemories, setFilteredMemories] = useState<Memory[]>(initialMemories);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedMemory, setSelectedMemory] = useState<Memory | undefined>(undefined);
   const [modalMode, setModalMode] = useState<'create' | 'edit'>('create');
   const [sortOrder, setSortOrder] = useState<'newest' | 'oldest'>('oldest');
+  const [selectedTag, setSelectedTag] = useState<Tag | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isInitialLoad, setIsInitialLoad] = useState(true);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
@@ -28,31 +32,39 @@ export default function MemoryList({ initialMemories }: MemoryListProps) {
   const { showToast } = useToast();
 
   useEffect(() => {
-    const sortMemories = () => {
-      const sortedMemories = [...initialMemories].sort((a, b) => {
+    let timeoutId: NodeJS.Timeout;
+
+    const sortAndFilterMemories = () => {
+      const sortedMemories = [...memories].sort((a, b) => {
         const dateA = new Date(a.timestamp).getTime();
         const dateB = new Date(b.timestamp).getTime();
         return sortOrder === 'newest' ? dateB - dateA : dateA - dateB;
       });
-      setMemories(sortedMemories);
+
+      const filtered = selectedTag
+        ? sortedMemories.filter(memory => memory.tags?.includes(selectedTag))
+        : sortedMemories;
+      
+      setFilteredMemories(filtered);
       setIsLoading(false);
     };
 
-    if (isInitialLoad) {
-      setTimeout(() => {
-        sortMemories();
+    const loadMemories = () => {
+      setIsLoading(true);
+      timeoutId = setTimeout(() => {
+        sortAndFilterMemories();
         setIsInitialLoad(false);
-      }, 1000);
-    } else {
-      sortMemories();
-    }
+      }, isInitialLoad ? 1000 : 300);
+    };
+
+    loadMemories();
 
     return () => {
-      if (isInitialLoad) {
-        setIsLoading(true);
+      if (timeoutId) {
+        clearTimeout(timeoutId);
       }
     };
-  }, [sortOrder, initialMemories, isInitialLoad]);
+  }, [sortOrder, memories, isInitialLoad, selectedTag]);
 
   const handleDeleteClick = (memory: Memory) => {
     setMemoryToDelete(memory);
@@ -96,6 +108,7 @@ export default function MemoryList({ initialMemories }: MemoryListProps) {
       await refreshMemories();
       const updatedMemories = await getMemories();
       setMemories(updatedMemories);
+      setSelectedTag(null);
       showToast(
         modalMode === 'create' 
           ? 'Memory created successfully' 
@@ -118,18 +131,27 @@ export default function MemoryList({ initialMemories }: MemoryListProps) {
     setSortOrder(event.target.value as 'newest' | 'oldest');
   };
 
+  const handleTagChange = (tag: Tag | null) => {
+    setSelectedTag(tag);
+  };
+
   const renderHeader = () => (
-    <div className="flex justify-between items-center">
-      <select
-        className="select select-bordered w-[200px]"
-        value={sortOrder}
-        onChange={handleSortChange}
-      >
-        <option value="oldest">Oldest to Newest</option>
-        <option value="newest">Newest to Oldest</option>
-      </select>
+    <div className="flex flex-col-reverse justify-start md:justify-between md:flex-row gap-4">
+        <select
+          className="select select-bordered w-full md:w-[200px]"
+          value={sortOrder}
+          onChange={handleSortChange}
+        >
+          <option value="oldest">Oldest to Newest</option>
+          <option value="newest">Newest to Oldest</option>
+        </select>
+        <TagSelector
+          selectedTag={selectedTag}
+          onChange={handleTagChange}
+          className="order-first md:order-none flex-shrink-0 mr-auto"
+        />
       <button 
-        className="btn btn-outline  btn-primary"
+        className="flex items-center btn btn-outline btn-primary"
         onClick={handleCreateClick}
       >
         <PlusIcon className="w-5 h-5" />
@@ -173,13 +195,17 @@ export default function MemoryList({ initialMemories }: MemoryListProps) {
     );
   }
 
-  if (!Array.isArray(memories) || memories.length === 0) {
+  if (!Array.isArray(filteredMemories) || filteredMemories.length === 0) {
     return (
       <div className="container mx-auto px-4 py-8">
         <div className="flex flex-col gap-4 max-w-4xl mx-auto">
           {renderHeader()}
           <div className="alert">
-            <span>No memories found. Create your first memory!</span>
+            <span>
+              {selectedTag
+                ? `No memories found with the tag "${selectedTag}".`
+                : 'No memories found. Create your first memory!'}
+            </span>
           </div>
           <MemoryModal 
             isOpen={isModalOpen}
@@ -197,14 +223,14 @@ export default function MemoryList({ initialMemories }: MemoryListProps) {
     <div className="container mx-auto px-4 py-8">
       <div className="flex flex-col gap-4 max-w-4xl mx-auto">
         {renderHeader()}
-        {memories.map((memory, index) => (
-          <div key={memory.id} className="flex flex-col items-center">
+        {filteredMemories.map((memory, index) => (
+          <div key={memory.id} className="flex flex-col items-center mt-4">
             <MemoryCard 
               memory={memory} 
               onEdit={handleEdit}
               onDelete={handleDeleteClick}
             />
-            {index < memories.length - 1 && (
+            {index < filteredMemories.length - 1 && (
               <div className="flex flex-col items-center gap-2 mt-6">
                 <div className="w-2 h-2 rounded-full bg-base-content"></div>
                 <div className="w-2 h-2 rounded-full bg-base-content"></div>

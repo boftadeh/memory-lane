@@ -5,7 +5,8 @@ import { Memory, MemorySchema } from '@/schemas/memory';
 import Modal from './Modal';
 import Image from 'next/image';
 import { XMarkIcon } from '@heroicons/react/24/outline';
-import { createMemory, updateMemory } from '@/app/actions';
+import TagSelector from './TagSelector';
+import { AVAILABLE_TAGS, Tag } from '@/types/tags';
 
 type MemoryModalProps = {
   isOpen: boolean;
@@ -18,6 +19,8 @@ type MemoryModalProps = {
 export default function MemoryModal({ isOpen, onClose, onSave, memory, mode }: MemoryModalProps) {
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [showFileInput, setShowFileInput] = useState(true);
+  const [selectedTags, setSelectedTags] = useState<Tag[]>([]);
+  
   const { 
     register, 
     handleSubmit, 
@@ -33,6 +36,7 @@ export default function MemoryModal({ isOpen, onClose, onSave, memory, mode }: M
       description: '',
       timestamp: new Date().toISOString().split('T')[0],
       image: '',
+      tags: [],
     },
   });
 
@@ -45,7 +49,9 @@ export default function MemoryModal({ isOpen, onClose, onSave, memory, mode }: M
         description: memory.description,
         timestamp: localDate.toISOString().split('T')[0],
         image: memory.image || '',
+        tags: memory.tags || [],
       });
+      setSelectedTags(memory.tags as Tag[] || []);
       setImagePreview(memory.image || null);
       setShowFileInput(false);
     } else {
@@ -54,7 +60,9 @@ export default function MemoryModal({ isOpen, onClose, onSave, memory, mode }: M
         description: '',
         timestamp: new Date().toISOString().split('T')[0],
         image: '',
+        tags: [],
       });
+      setSelectedTags([]);
       setImagePreview(null);
       setShowFileInput(true);
     }
@@ -73,12 +81,51 @@ export default function MemoryModal({ isOpen, onClose, onSave, memory, mode }: M
     }
   };
 
+  const handleTagChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const tag = e.target.value as Tag;
+    if (!tag) return;
+    
+    if (!selectedTags.includes(tag)) {
+      const newTags = [...selectedTags, tag];
+      if (newTags.length <= 3) {
+        setSelectedTags(newTags);
+        setValue('tags', newTags);
+      }
+    }
+    e.target.value = ''; // Reset select after selection
+  };
+
+  const removeTag = (tagToRemove: Tag) => {
+    const newTags = selectedTags.filter(tag => tag !== tagToRemove);
+    setSelectedTags(newTags);
+    setValue('tags', newTags);
+  };
+
   const onSubmit = async (data: Memory) => {
     try {
-      if (mode === 'create') {
-        await createMemory(data);
-      } else if (memory?.id) {
-        await updateMemory(memory.id, data);
+      const date = new Date(data.timestamp);
+      const adjustedDate = new Date(date.getTime() + date.getTimezoneOffset() * 60000);
+      
+      const memoryData = {
+        ...data,
+        timestamp: adjustedDate.toISOString(),
+        tags: selectedTags,
+      };
+
+      const url = mode === 'create' 
+        ? `${process.env.NEXT_PUBLIC_API_URL}/memories`
+        : `${process.env.NEXT_PUBLIC_API_URL}/memories/${memory?.id}`;
+      
+      const response = await fetch(url, {
+        method: mode === 'create' ? 'POST' : 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(memoryData),
+      });
+
+      if (!response.ok) {
+        throw new Error(`Failed to ${mode} memory`);
       }
 
       onSave();
@@ -188,6 +235,47 @@ export default function MemoryModal({ isOpen, onClose, onSave, memory, mode }: M
                 </div>
               )}
             </label>
+
+            <div className="fieldset-label flex flex-col items-start w-full gap-1">
+              <div className="flex items-center gap-2">
+                <span>Tags</span>
+                <span className="text-sm opacity-70">(up to 3)</span>
+              </div>
+              <div className="space-y-2 w-full">
+                <select
+                  className="select select-bordered w-full"
+                  defaultValue=""
+                  onChange={handleTagChange}
+                  disabled={selectedTags.length >= 3}
+                >
+                  <option disabled value="">Select a tag</option>
+                  {AVAILABLE_TAGS
+                    .filter(tag => !selectedTags.includes(tag))
+                    .map((tag) => (
+                      <option key={tag} value={tag}>
+                        {tag.charAt(0).toUpperCase() + tag.slice(1)}
+                      </option>
+                    ))}
+                </select>
+                {selectedTags.length > 0 && (
+                  <div className="flex flex-wrap gap-2 mt-2">
+                    {selectedTags.map((tag) => (
+                      <div 
+                        key={tag}
+                        className="badge badge-soft badge-primary gap-1 cursor-pointer"
+                        onClick={() => removeTag(tag)}
+                      >
+                        <span className="capitalize">{tag}</span>
+                        <XMarkIcon className="h-4 w-4" />
+                      </div>
+                    ))}
+                  </div>
+                )}
+                {errors.tags && (
+                  <p className="text-error text-sm">{errors.tags.message}</p>
+                )}
+              </div>
+            </div>
           </div>
         </fieldset>
 

@@ -1,7 +1,9 @@
 import { Memory } from '@/schemas/memory';
 import Image from 'next/image';
 import { EllipsisVerticalIcon } from '@heroicons/react/24/outline';
+import { TagIcon } from '@heroicons/react/24/solid';
 import Dropdown from './Dropdown';
+import { TAG_COLORS, Tag } from '@/types/tags';
 
 type MemoryCardProps = {
   memory: Memory;
@@ -28,8 +30,22 @@ export default function MemoryCard({ memory, onEdit, onDelete }: MemoryCardProps
     }
   ];
 
+  const tags = memory.tags as Tag[] || [];
+  
   return (
-    <div className="card bg-base-200 shadow-xl w-full min-h-[175px] max-w-2xl">
+    <div className="card bg-base-200 shadow-xl w-full min-h-[150px] max-w-2xl relative">
+      {tags.length > 0 && (
+        <div className="absolute -top-3 -right-2 flex gap-2 flex-wrap justify-end">
+          {tags.map((tag) => (
+            <div 
+              key={tag}
+              className={`badge badge-soft badge-primary`}
+            >
+              <span className="capitalize">{tag}</span>
+            </div>
+          ))}
+        </div>
+      )}
       <div className="card-body">
         <div className="flex items-start gap-4">
           <div className="avatar flex-shrink-0">

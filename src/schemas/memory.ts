@@ -8,6 +8,7 @@ export const MemorySchema = z.object({
     .max(700, 'Description cannot exceed 700 characters'),
   timestamp: z.string().min(1, 'Date is required'),
   image: z.string().min(1, 'Image is required'),
+  tags: z.array(z.string()).max(3, 'Maximum 3 tags allowed').optional(),
 });
 
 export type Memory = z.infer<typeof MemorySchema>; 
