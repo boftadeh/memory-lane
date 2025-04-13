@@ -46,6 +46,7 @@ export default function DescriptionModal({ isOpen, onClose, description, onSave 
             className="textarea textarea-bordered w-full resize-none h-[120px]"
             placeholder="Enter your description..."
             {...register('description')}
+            maxLength={500}
           />
           {errors.description && (
             <label className="label">
