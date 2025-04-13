@@ -3,6 +3,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Memory, MemorySchema } from '@/schemas/memory';
 import Modal from './Modal';
+import Image from 'next/image';
 
 type MemoryModalProps = {
   isOpen: boolean;
@@ -167,11 +168,12 @@ export default function MemoryModal({ isOpen, onClose, onSave, memory, mode }: M
                 <p className="text-error text-sm">{errors.image.message}</p>
               )}
               {imagePreview && (
-                <div className="mt-2">
-                  <img
+                <div className="mt-2 relative w-full h-48">
+                  <Image
                     src={imagePreview}
                     alt="Preview"
-                    className="max-w-xs rounded-lg shadow-lg"
+                    fill
+                    className="object-contain rounded-lg"
                   />
                 </div>
               )}

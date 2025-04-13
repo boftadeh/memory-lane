@@ -1,4 +1,5 @@
 import { Memory } from '@/schemas/memory';
+import Image from 'next/image';
 
 type MemoryCardProps = {
   memory: Memory;
@@ -18,11 +19,12 @@ export default function MemoryCard({ memory, onEdit, onDelete }: MemoryCardProps
       <div className="card-body">
         <div className="flex items-start gap-4">
           <div className="avatar">
-            <div className="w-24 h-24 rounded-full">
-              <img 
+            <div className="w-24 h-24 rounded-full relative">
+              <Image 
                 src={memory.image} 
                 alt={memory.name} 
-                className="object-cover"
+                fill
+                className="object-cover rounded-full"
               />
             </div>
           </div>
