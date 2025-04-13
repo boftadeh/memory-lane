@@ -155,37 +155,6 @@ export default function MemoryList({ initialMemories }: MemoryListProps) {
     return (
       <div className="container mx-auto px-4 py-8">
         <div className="flex flex-col gap-4 max-w-4xl mx-auto">
-          <div className="flex justify-between items-center">
-            <div className="dropdown dropdown-end">
-              <div tabIndex={0} role="button" className="btn btn-ghost btn-circle">
-                <FunnelIcon className="h-6 w-6" />
-              </div>
-              <ul tabIndex={0} className="dropdown-content z-[1] menu p-2 shadow bg-base-200 rounded-box w-52">
-                <li>
-                  <button 
-                    onClick={() => handleSortChange('newest')}
-                    className={sortOrder === 'newest' ? 'active' : ''}
-                  >
-                    Newest First
-                  </button>
-                </li>
-                <li>
-                  <button 
-                    onClick={() => handleSortChange('oldest')}
-                    className={sortOrder === 'oldest' ? 'active' : ''}
-                  >
-                    Oldest First
-                  </button>
-                </li>
-              </ul>
-            </div>
-            <button 
-              className="btn btn-primary"
-              onClick={handleCreateClick}
-            >
-              Create Memory
-            </button>
-          </div>
           {renderSkeletons()}
         </div>
       </div>
@@ -196,30 +165,7 @@ export default function MemoryList({ initialMemories }: MemoryListProps) {
     return (
       <div className="container mx-auto px-4 py-8">
         <div className="flex flex-col gap-4 max-w-4xl mx-auto">
-          <div className="flex justify-between items-center">
-            <div className="dropdown dropdown-end">
-              <div tabIndex={0} role="button" className="btn btn-ghost btn-circle">
-                <FunnelIcon className="h-6 w-6" />
-              </div>
-              <ul tabIndex={0} className="dropdown-content z-[1] menu p-2 shadow bg-base-200 rounded-box w-52">
-                <li>
-                  <button 
-                    onClick={() => handleSortChange('newest')}
-                    className={sortOrder === 'newest' ? 'active' : ''}
-                  >
-                    Newest First
-                  </button>
-                </li>
-                <li>
-                  <button 
-                    onClick={() => handleSortChange('oldest')}
-                    className={sortOrder === 'oldest' ? 'active' : ''}
-                  >
-                    Oldest First
-                  </button>
-                </li>
-              </ul>
-            </div>
+          <div className="flex justify-end items-center">
             <button 
               className="btn btn-primary"
               onClick={handleCreateClick}
@@ -230,6 +176,14 @@ export default function MemoryList({ initialMemories }: MemoryListProps) {
           <div className="alert">
             <span>No memories found. Create your first memory!</span>
           </div>
+
+        <MemoryModal 
+          isOpen={isModalOpen}
+          onClose={() => setIsModalOpen(false)}
+          onSave={handleMemoryUpdated}
+          memory={selectedMemory}
+          mode={modalMode}
+        />
         </div>
       </div>
     );

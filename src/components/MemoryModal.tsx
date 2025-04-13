@@ -4,6 +4,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { Memory, MemorySchema } from '@/schemas/memory';
 import Modal from './Modal';
 import Image from 'next/image';
+import { XMarkIcon } from '@heroicons/react/24/outline';
 
 type MemoryModalProps = {
   isOpen: boolean;
@@ -15,6 +16,7 @@ type MemoryModalProps = {
 
 export default function MemoryModal({ isOpen, onClose, onSave, memory, mode }: MemoryModalProps) {
   const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const [showFileInput, setShowFileInput] = useState(true);
   const { 
     register, 
     handleSubmit, 
@@ -44,6 +46,7 @@ export default function MemoryModal({ isOpen, onClose, onSave, memory, mode }: M
         image: memory.image || '',
       });
       setImagePreview(memory.image || null);
+      setShowFileInput(false);
     } else {
       reset({
         name: '',
@@ -52,6 +55,7 @@ export default function MemoryModal({ isOpen, onClose, onSave, memory, mode }: M
         image: '',
       });
       setImagePreview(null);
+      setShowFileInput(true);
     }
   }, [memory, isOpen, reset]);
 
@@ -119,7 +123,7 @@ export default function MemoryModal({ isOpen, onClose, onSave, memory, mode }: M
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
         <fieldset className="fieldset w-full">          
           <div className="space-y-4 w-full">
-            <label className="fieldset-label flex flex-col items-start w-full gap-2">
+            <label className="fieldset-label flex flex-col items-start w-full gap-1">
               Name
               <input
                 type="text"
@@ -132,7 +136,7 @@ export default function MemoryModal({ isOpen, onClose, onSave, memory, mode }: M
               )}
             </label>
 
-            <label className="fieldset-label flex flex-col items-start w-full gap-2">
+            <label className="fieldset-label flex flex-col items-start w-full gap-1">
               Description
               <textarea
                 className="textarea h-24 resize-none w-full text-base-content"
@@ -144,7 +148,7 @@ export default function MemoryModal({ isOpen, onClose, onSave, memory, mode }: M
               )}
             </label>
 
-            <label className="fieldset-label flex flex-col items-start w-full gap-2">
+            <label className="fieldset-label flex flex-col items-start w-full gap-1">
               Date
               <input
                 type="date"
@@ -157,19 +161,36 @@ export default function MemoryModal({ isOpen, onClose, onSave, memory, mode }: M
               )}
             </label>
 
-            <label className="fieldset-label flex flex-col items-start w-full gap-2">
+            <label className="fieldset-label flex flex-col items-start w-full gap-1">
               Image
-              <input
-                type="file"
-                className="file-input w-full text-base-content"
-                accept="image/*"
-                onChange={handleImageChange}
-              />
-              {errors.image && (
-                <p className="text-error text-sm">{errors.image.message}</p>
+              {!imagePreview && showFileInput && (
+                <div className="w-full">
+                  <input
+                    type="file"
+                    className="file-input w-full text-base-content"
+                    accept="image/*"
+                    onChange={handleImageChange}
+                  />
+                  {errors.image && (
+                    <p className="text-error text-sm mt-1">{errors.image.message}</p>
+                  )}
+                </div>
               )}
               {imagePreview && (
-                <div className="mt-2">
+                <div className="relative inline-block">
+                  <button
+                    type="button"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      setImagePreview(null);
+                      setValue('image', '');
+                      setShowFileInput(true);
+                    }}
+                    className="btn btn-circle btn-ghost btn-sm absolute -top-2 -right-2 z-10 bg-base-200"
+                  >
+                    <XMarkIcon className="h-4 w-4" />
+                  </button>
                   <div className="avatar">
                     <div className="w-24 h-24 rounded-full relative">
                       <Image
