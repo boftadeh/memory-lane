@@ -35,7 +35,7 @@ export default function MemoryModal({ isOpen, onClose, onSave, memory, mode }: M
     defaultValues: {
       name: '',
       description: '',
-      timestamp: new Date().toISOString().split('T')[0],
+      timestamp: '',
       image: '',
       tags: [],
     },
@@ -59,7 +59,7 @@ export default function MemoryModal({ isOpen, onClose, onSave, memory, mode }: M
       reset({
         name: '',
         description: '',
-        timestamp: new Date().toISOString().split('T')[0],
+        timestamp: '',
         image: '',
         tags: [],
       });
