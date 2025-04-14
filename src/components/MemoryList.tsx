@@ -1,20 +1,23 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { PlusIcon } from '@heroicons/react/24/solid';
+import { useEffect, useState } from 'react';
+
+import { refreshMemories, deleteMemory, getMemories } from '@/app/actions';
+import { useToast } from '@/context/ToastContext';
 import { Memory } from '@/schemas/memory';
+import { Tag } from '@/types/tags';
+import DeleteConfirmationModal from './DeleteConfirmationModal';
 import MemoryCard from './MemoryCard';
 import MemoryModal from './MemoryModal';
 import MemorySkeleton from './MemorySkeleton';
-import { refreshMemories, deleteMemory, getMemories } from '@/app/actions';
-import { useToast } from '@/context/ToastContext';
-import DeleteConfirmationModal from './DeleteConfirmationModal';
-import { PlusIcon } from '@heroicons/react/24/solid';
 import TagSelector from './TagSelector';
-import { Tag } from '@/types/tags';
 
 type MemoryListProps = {
   initialMemories: Memory[];
 };
+
+type SortOrder = 'newest' | 'oldest';
 
 export default function MemoryList({ initialMemories }: MemoryListProps) {
   const [memories, setMemories] = useState<Memory[]>(initialMemories);
@@ -22,7 +25,7 @@ export default function MemoryList({ initialMemories }: MemoryListProps) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedMemory, setSelectedMemory] = useState<Memory | undefined>(undefined);
   const [modalMode, setModalMode] = useState<'create' | 'edit'>('create');
-  const [sortOrder, setSortOrder] = useState<'newest' | 'oldest'>('oldest');
+  const [sortOrder, setSortOrder] = useState<SortOrder>('oldest');
   const [selectedTag, setSelectedTag] = useState<Tag | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isInitialLoad, setIsInitialLoad] = useState(true);
@@ -34,7 +37,7 @@ export default function MemoryList({ initialMemories }: MemoryListProps) {
   useEffect(() => {
     let timeoutId: NodeJS.Timeout;
 
-    const sortAndFilterMemories = () => {
+    const sortAndFilterMemories = (): void => {
       const sortedMemories = [...memories].sort((a, b) => {
         const dateA = new Date(a.timestamp).getTime();
         const dateB = new Date(b.timestamp).getTime();
@@ -49,7 +52,7 @@ export default function MemoryList({ initialMemories }: MemoryListProps) {
       setIsLoading(false);
     };
 
-    const loadMemories = () => {
+    const loadMemories = (): void => {
       setIsLoading(true);
       timeoutId = setTimeout(() => {
         sortAndFilterMemories();
@@ -66,18 +69,18 @@ export default function MemoryList({ initialMemories }: MemoryListProps) {
     };
   }, [sortOrder, memories, isInitialLoad, selectedTag]);
 
-  const handleDeleteClick = (memory: Memory) => {
+  const handleDeleteClick = (memory: Memory): void => {
     setMemoryToDelete(memory);
     setIsDeleteModalOpen(true);
   };
 
-  const handleEdit = (memory: Memory) => {
+  const handleEdit = (memory: Memory): void => {
     setSelectedMemory(memory);
     setModalMode('edit');
     setIsModalOpen(true);
   };
 
-  const handleDelete = async () => {
+  const handleDelete = async (): Promise<void> => {
     if (!memoryToDelete?.id) return;
     
     try {
@@ -101,7 +104,7 @@ export default function MemoryList({ initialMemories }: MemoryListProps) {
     }
   };
 
-  const handleMemoryUpdated = async () => {
+  const handleMemoryUpdated = async (): Promise<void> => {
     try {
       setIsModalOpen(false);
       setIsLoading(true);
@@ -121,35 +124,35 @@ export default function MemoryList({ initialMemories }: MemoryListProps) {
     }
   };
 
-  const handleCreateClick = () => {
+  const handleCreateClick = (): void => {
     setSelectedMemory(undefined);
     setModalMode('create');
     setIsModalOpen(true);
   };
 
-  const handleSortChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    setSortOrder(event.target.value as 'newest' | 'oldest');
+  const handleSortChange = (event: React.ChangeEvent<HTMLSelectElement>): void => {
+    setSortOrder(event.target.value as SortOrder);
   };
 
-  const handleTagChange = (tag: Tag | null) => {
+  const handleTagChange = (tag: Tag | null): void => {
     setSelectedTag(tag);
   };
 
-  const renderHeader = () => (
+  const renderHeader = (): JSX.Element => (
     <div className="flex flex-col-reverse justify-start md:justify-between md:flex-row gap-4">
-        <select
-          className="select select-bordered w-full md:w-[200px]"
-          value={sortOrder}
-          onChange={handleSortChange}
-        >
-          <option value="oldest">Oldest to Newest</option>
-          <option value="newest">Newest to Oldest</option>
-        </select>
-        <TagSelector
-          selectedTag={selectedTag}
-          onChange={handleTagChange}
-          className="order-first md:order-none flex-shrink-0 mr-auto"
-        />
+      <select
+        className="select select-bordered w-full md:w-[200px]"
+        value={sortOrder}
+        onChange={handleSortChange}
+      >
+        <option value="oldest">Oldest to Newest</option>
+        <option value="newest">Newest to Oldest</option>
+      </select>
+      <TagSelector
+        selectedTag={selectedTag}
+        onChange={handleTagChange}
+        className="order-first md:order-none flex-shrink-0 mr-auto"
+      />
       <button 
         className="flex items-center btn btn-outline btn-primary"
         onClick={handleCreateClick}
@@ -160,16 +163,16 @@ export default function MemoryList({ initialMemories }: MemoryListProps) {
     </div>
   );
 
-  const renderSkeletons = () => (
+  const renderSkeletons = (): JSX.Element => (
     <>
       {[1, 2, 3].map((index) => (
         <div key={index} className="flex flex-col items-center">
           <MemorySkeleton />
           {index < 3 && (
             <div className="flex flex-col items-center gap-2 mt-6 animate-pulse">
-              <div className="w-2 h-2 rounded-full bg-base-content opacity-40"></div>
-              <div className="w-2 h-2 rounded-full bg-base-content opacity-40"></div>
-              <div className="w-2 h-2 rounded-full bg-base-content opacity-40"></div>
+              <div className="w-2 h-2 rounded-full bg-base-content opacity-40" />
+              <div className="w-2 h-2 rounded-full bg-base-content opacity-40" />
+              <div className="w-2 h-2 rounded-full bg-base-content opacity-40" />
             </div>
           )}
         </div>

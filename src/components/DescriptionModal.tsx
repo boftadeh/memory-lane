@@ -1,7 +1,8 @@
-import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import Modal from './Modal';
+import { useForm } from 'react-hook-form';
+
 import { Description, DescriptionSchema } from '@/schemas/description';
+import Modal from './Modal';
 
 type DescriptionModalProps = {
   isOpen: boolean;
@@ -10,7 +11,7 @@ type DescriptionModalProps = {
   onSave: (description: string) => void;
 };
 
-export default function DescriptionModal({ isOpen, onClose, description, onSave }: DescriptionModalProps) {
+export default function DescriptionModal({ isOpen, onClose, description, onSave }: DescriptionModalProps): JSX.Element {
   const {
     register,
     handleSubmit,
@@ -23,12 +24,12 @@ export default function DescriptionModal({ isOpen, onClose, description, onSave 
     }
   });
 
-  const onSubmit = (data: Description) => {
+  const onSubmit = (data: Description): void => {
     onSave(data.description);
     onClose();
   };
 
-  const handleClose = () => {
+  const handleClose = (): void => {
     reset({ description });
     onClose();
   };

@@ -1,19 +1,21 @@
 'use server';
 
-import { Memory } from '@/schemas/memory';
 import { revalidatePath } from 'next/cache';
+
+import { Memory } from '@/schemas/memory';
+
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
 
 export async function getMemories(): Promise<Memory[]> {
   try {
-    const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
-    const response = await fetch(`${apiUrl}/memories`);
+    const response = await fetch(`${API_URL}/memories`);
     
     if (!response.ok) {
       console.error('Failed to fetch memories:', response.status, response.statusText);
       return [];
     }
     
-    const data = await response.json();
+    const data = (await response.json()) as Memory[] | { memories: Memory[] };
     return Array.isArray(data) ? data : data.memories || [];
   } catch (error) {
     console.error('Error fetching memories:', error);
@@ -21,14 +23,13 @@ export async function getMemories(): Promise<Memory[]> {
   }
 }
 
-export async function refreshMemories() {
-  revalidatePath('/');
+export async function refreshMemories(): Promise<void> {
+  await revalidatePath('/');
 }
 
-export async function deleteMemory(id: number) {
+export async function deleteMemory(id: number): Promise<boolean> {
   try {
-    const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
-    const response = await fetch(`${apiUrl}/memories/${id}`, {
+    const response = await fetch(`${API_URL}/memories/${id}`, {
       method: 'DELETE',
     });
 
@@ -45,7 +46,6 @@ export async function deleteMemory(id: number) {
 
 export async function createMemory(data: Memory): Promise<boolean> {
   try {
-    const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
     const date = new Date(data.timestamp);
     const adjustedDate = new Date(date.getTime() + date.getTimezoneOffset() * 60000);
     
@@ -54,7 +54,7 @@ export async function createMemory(data: Memory): Promise<boolean> {
       timestamp: adjustedDate.toISOString(),
     };
 
-    const response = await fetch(`${apiUrl}/memories`, {
+    const response = await fetch(`${API_URL}/memories`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -66,7 +66,7 @@ export async function createMemory(data: Memory): Promise<boolean> {
       throw new Error(`Failed to create memory: ${response.status} ${response.statusText}`);
     }
 
-    revalidatePath('/');
+    await revalidatePath('/');
     return true;
   } catch (error) {
     console.error('Error creating memory:', error);
@@ -76,7 +76,6 @@ export async function createMemory(data: Memory): Promise<boolean> {
 
 export async function updateMemory(id: number, data: Memory): Promise<boolean> {
   try {
-    const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
     const date = new Date(data.timestamp);
     const adjustedDate = new Date(date.getTime() + date.getTimezoneOffset() * 60000);
     
@@ -85,7 +84,7 @@ export async function updateMemory(id: number, data: Memory): Promise<boolean> {
       timestamp: adjustedDate.toISOString(),
     };
 
-    const response = await fetch(`${apiUrl}/memories/${id}`, {
+    const response = await fetch(`${API_URL}/memories/${id}`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
@@ -97,7 +96,7 @@ export async function updateMemory(id: number, data: Memory): Promise<boolean> {
       throw new Error(`Failed to update memory: ${response.status} ${response.statusText}`);
     }
 
-    revalidatePath('/');
+    await revalidatePath('/');
     return true;
   } catch (error) {
     console.error('Error updating memory:', error);

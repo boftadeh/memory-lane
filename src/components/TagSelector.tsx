@@ -6,7 +6,7 @@ type TagSelectorProps = {
   className?: string;
 };
 
-export default function TagSelector({ selectedTag, onChange, className = '' }: TagSelectorProps) {
+export default function TagSelector({ selectedTag, onChange, className = '' }: TagSelectorProps): JSX.Element {
   return (
     <div className={`filter ${className}`}>
       <input 

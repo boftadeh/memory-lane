@@ -1,27 +1,34 @@
 'use client';
 
-import React, { createContext, useContext, useState, ReactNode } from 'react';
-import Toast, { ToastType } from '@/components/Toast';
+import { createContext, type ReactNode, useContext, useState } from 'react';
+
+import Toast, { type ToastType } from '@/components/Toast';
 
 interface ToastContextType {
   showToast: (message: string, type?: ToastType) => void;
 }
 
+interface ToastState {
+  message: string;
+  type: ToastType;
+  id: number;
+}
+
+interface ToastProviderProps {
+  children: ReactNode;
+}
+
 const ToastContext = createContext<ToastContextType | undefined>(undefined);
 
-export function ToastProvider({ children }: { children: ReactNode }) {
-  const [toast, setToast] = useState<{
-    message: string;
-    type: ToastType;
-    id: number;
-  } | null>(null);
+export function ToastProvider({ children }: ToastProviderProps): JSX.Element {
+  const [toast, setToast] = useState<ToastState | null>(null);
 
-  const showToast = (message: string, type: ToastType = 'success') => {
+  const showToast = (message: string, type: ToastType = 'success'): void => {
     const id = Date.now();
     setToast({ message, type, id });
   };
 
-  const handleClose = () => {
+  const handleClose = (): void => {
     setToast(null);
   };
 
@@ -40,7 +47,7 @@ export function ToastProvider({ children }: { children: ReactNode }) {
   );
 }
 
-export function useToast() {
+export function useToast(): ToastContextType {
   const context = useContext(ToastContext);
   if (context === undefined) {
     throw new Error('useToast must be used within a ToastProvider');

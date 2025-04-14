@@ -1,17 +1,19 @@
 'use client';
 
+import { CubeIcon, EllipsisVerticalIcon, PencilIcon, ShareIcon } from '@heroicons/react/24/outline';
 import { useState } from 'react';
-import { CubeIcon, ShareIcon, EllipsisVerticalIcon, PencilIcon } from '@heroicons/react/24/outline';
 import { useToast } from '@/context/ToastContext';
 import DescriptionModal from './DescriptionModal';
 import Dropdown from './Dropdown';
 
-export default function Header() {
+const DEFAULT_DESCRIPTION = "Jae Doe's journey has been a tapestry of curiosity and exploration. From a young age, their inquisitive mind led them through diverse interests. Education shaped their multidisciplinary perspective, while personal experiences added depth and resilience to their story.";
+
+export default function Header(): JSX.Element {
   const [isEditingDescription, setIsEditingDescription] = useState(false);
-  const [description, setDescription] = useState("Jae Doe's journey has been a tapestry of curiosity and exploration. From a young age, their inquisitive mind led them through diverse interests. Education shaped their multidisciplinary perspective, while personal experiences added depth and resilience to their story.");
+  const [description, setDescription] = useState(DEFAULT_DESCRIPTION);
   const { showToast } = useToast();
 
-  const handleShare = async () => {
+  const handleShare = async (): Promise<void> => {
     try {
       await navigator.clipboard.writeText(window.location.href);
       showToast('URL copied to clipboard!');
@@ -20,11 +22,11 @@ export default function Header() {
     }
   };
 
-  const handleEditClick = () => {
+  const handleEditClick = (): void => {
     setIsEditingDescription(true);
   };
 
-  const handleSave = (newDescription: string) => {
+  const handleSave = (newDescription: string): void => {
     setDescription(newDescription);
     showToast('Description updated successfully!');
   };
@@ -32,7 +34,7 @@ export default function Header() {
   const dropdownOptions = [
     {
       label: 'Edit Description',
-      labelIcon: <PencilIcon className="h-6 w-6" />,
+      labelIcon: <PencilIcon className="h-6 w-6" aria-hidden="true" />,
       onClick: handleEditClick
     }
   ];
@@ -43,12 +45,17 @@ export default function Header() {
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-3">
             <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center">
-              <CubeIcon className="w-12 h-12 text-primary" />
+              <CubeIcon className="w-12 h-12 text-primary" aria-hidden="true" />
             </div>
             <h1 className="text-3xl font-bold">Jae's memory lane</h1>
           </div>
-          <button className="btn btn-ghost btn-circle" onClick={handleShare}>
-            <ShareIcon className="h-5 w-5" />
+          <button 
+            className="btn btn-ghost btn-circle" 
+            onClick={handleShare}
+            type="button"
+            aria-label="Share page"
+          >
+            <ShareIcon className="h-5 w-5" aria-hidden="true" />
           </button>
         </div>
         
@@ -56,7 +63,7 @@ export default function Header() {
           <div className="card-body relative">
             <div className="absolute top-4 right-4">
               <Dropdown
-                actionIcon={<EllipsisVerticalIcon className="h-6 w-6" />}
+                actionIcon={<EllipsisVerticalIcon className="h-6 w-6" aria-hidden="true" />}
                 options={dropdownOptions}
               />
             </div>

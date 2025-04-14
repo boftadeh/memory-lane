@@ -1,8 +1,8 @@
-import MemoryList from '@/components/MemoryList';
-import Header from '@/components/Header';
 import { getMemories } from './actions';
+import Header from '@/components/Header';
+import MemoryList from '@/components/MemoryList';
 
-export default async function Home() {
+export default async function Home(): Promise<JSX.Element> {
   const memories = await getMemories();
 
   return (

@@ -1,9 +1,9 @@
-import { Memory } from '@/schemas/memory';
-import Image from 'next/image';
 import { EllipsisVerticalIcon } from '@heroicons/react/24/outline';
-import { TagIcon } from '@heroicons/react/24/solid';
+import Image from 'next/image';
+
+import { Memory } from '@/schemas/memory';
+import { Tag } from '@/types/tags';
 import Dropdown from './Dropdown';
-import { TAG_COLORS, Tag } from '@/types/tags';
 
 type MemoryCardProps = {
   memory: Memory;
@@ -39,7 +39,7 @@ export default function MemoryCard({ memory, onEdit, onDelete }: MemoryCardProps
           {tags.map((tag) => (
             <div 
               key={tag}
-              className={`badge badge-soft badge-primary`}
+              className="badge badge-soft badge-primary"
             >
               <span className="capitalize">{tag}</span>
             </div>

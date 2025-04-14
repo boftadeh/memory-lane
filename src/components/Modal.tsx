@@ -1,4 +1,4 @@
-import React, { ReactNode } from 'react';
+import { type ReactNode } from 'react';
 
 type ModalProps = {
   isOpen: boolean;
@@ -8,24 +8,26 @@ type ModalProps = {
   children: ReactNode;
 };
 
-export default function Modal({ isOpen, onClose, title, subTitle, children }: ModalProps) {
+export default function Modal({ isOpen, onClose, title, subTitle, children }: ModalProps): JSX.Element | null {
   if (!isOpen) return null;
 
   return (
     <div className="modal modal-open">
       <div className="modal-box">
         <div className="modal-header flex justify-between items-start mb-4">
-            <div>
+          <div>
             <h3 className="font-bold text-lg">{title}</h3>
-          {subTitle && (
-            <div className="text-sm opacity-70">
-              {subTitle}
-            </div>
-          )}
-            </div>
+            {subTitle && (
+              <div className="text-sm opacity-70">
+                {subTitle}
+              </div>
+            )}
+          </div>
           <button 
             className="btn btn-sm btn-circle" 
             onClick={onClose}
+            type="button"
+            aria-label="Close modal"
           >
             ✕
           </button>
@@ -34,7 +36,11 @@ export default function Modal({ isOpen, onClose, title, subTitle, children }: Mo
           {children}
         </div>
       </div>
-      <div className="modal-backdrop" onClick={onClose}></div>
+      <div 
+        className="modal-backdrop" 
+        onClick={onClose}
+        role="presentation"
+      />
     </div>
   );
 } 

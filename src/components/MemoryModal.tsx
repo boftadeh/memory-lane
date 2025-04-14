@@ -1,12 +1,15 @@
-import { useEffect, useState } from 'react';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { Memory, MemorySchema } from '@/schemas/memory';
-import Modal from './Modal';
 import Image from 'next/image';
 import { XMarkIcon } from '@heroicons/react/24/outline';
-import TagSelector from './TagSelector';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useEffect, useState } from 'react';
+import { useForm } from 'react-hook-form';
+
+import { Memory, MemorySchema } from '@/schemas/memory';
 import { AVAILABLE_TAGS, Tag } from '@/types/tags';
+import Modal from './Modal';
+import TagSelector from './TagSelector';
+
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
 
 type MemoryModalProps = {
   isOpen: boolean;
@@ -68,20 +71,21 @@ export default function MemoryModal({ isOpen, onClose, onSave, memory, mode }: M
     }
   }, [memory, isOpen, reset]);
 
-  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
     const file = e.target.files?.[0];
     if (file) {
       const reader = new FileReader();
       reader.onloadend = () => {
-        setImagePreview(reader.result as string);
-        setValue('image', reader.result as string);
+        const result = reader.result as string;
+        setImagePreview(result);
+        setValue('image', result);
         clearErrors('image');
       };
       reader.readAsDataURL(file);
     }
   };
 
-  const handleTagChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+  const handleTagChange = (e: React.ChangeEvent<HTMLSelectElement>): void => {
     const tag = e.target.value as Tag;
     if (!tag) return;
     
@@ -92,16 +96,16 @@ export default function MemoryModal({ isOpen, onClose, onSave, memory, mode }: M
         setValue('tags', newTags);
       }
     }
-    e.target.value = ''; // Reset select after selection
+    e.target.value = '';
   };
 
-  const removeTag = (tagToRemove: Tag) => {
+  const removeTag = (tagToRemove: Tag): void => {
     const newTags = selectedTags.filter(tag => tag !== tagToRemove);
     setSelectedTags(newTags);
     setValue('tags', newTags);
   };
 
-  const onSubmit = async (data: Memory) => {
+  const onSubmit = async (data: Memory): Promise<void> => {
     try {
       const date = new Date(data.timestamp);
       const adjustedDate = new Date(date.getTime() + date.getTimezoneOffset() * 60000);
@@ -113,8 +117,8 @@ export default function MemoryModal({ isOpen, onClose, onSave, memory, mode }: M
       };
 
       const url = mode === 'create' 
-        ? `${process.env.NEXT_PUBLIC_API_URL}/memories`
-        : `${process.env.NEXT_PUBLIC_API_URL}/memories/${memory?.id}`;
+        ? `${API_URL}/memories`
+        : `${API_URL}/memories/${memory?.id}`;
       
       const response = await fetch(url, {
         method: mode === 'create' ? 'POST' : 'PUT',
