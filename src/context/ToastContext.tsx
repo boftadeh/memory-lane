@@ -7,7 +7,7 @@ import type { ToastContextType, ToastState, ToastProviderProps } from './toast-u
 
 export const ToastContext = createContext<ToastContextType | undefined>(undefined);
 
-export function ToastProvider({ children }: ToastProviderProps): JSX.Element {
+export function ToastProvider({ children }: ToastProviderProps) {
   const [toast, setToast] = useState<ToastState | null>(null);
 
   const showToast = (message: string, type: ToastType = 'success'): void => {

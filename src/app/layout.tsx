@@ -14,7 +14,7 @@ export { metadata };
 
 export default function RootLayout({
   children,
-}: Readonly<RootLayoutProps>): JSX.Element {
+}: Readonly<RootLayoutProps>) {
   return (
     <html lang="en" data-theme="light">
       <body className={inter.className}>

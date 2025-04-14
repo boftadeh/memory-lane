@@ -122,7 +122,7 @@ export default function MemoryList({ initialMemories }: MemoryListProps) {
     setSelectedTag(tag);
   };
 
-  const renderHeader = (): JSX.Element => (
+  const renderHeader = () => (
     <div className="flex flex-col-reverse justify-start md:justify-between md:flex-row gap-4">
       { memories.length > 0 && (
         <>
@@ -152,7 +152,7 @@ export default function MemoryList({ initialMemories }: MemoryListProps) {
     </div>
   );
 
-  const renderSkeletons = (): JSX.Element => (
+  const renderSkeletons = () => (
     <>
       {[1, 2, 3].map((index) => (
         <div key={index} className="flex flex-col items-center">

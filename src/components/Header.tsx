@@ -7,7 +7,7 @@ import DescriptionModal from './DescriptionModal';
 import Dropdown from './Dropdown';
 
 const DEFAULT_DESCRIPTION = "Jae Doe&apos;s journey has been a tapestry of curiosity and exploration. From a young age, their inquisitive mind led them through diverse interests. Education shaped their multidisciplinary perspective, while personal experiences added depth and resilience to their story.";
-export default function Header(): JSX.Element {
+export default function Header() {
   const [isEditingDescription, setIsEditingDescription] = useState(false);
   const [description, setDescription] = useState(DEFAULT_DESCRIPTION);
   const { showToast } = useToast();

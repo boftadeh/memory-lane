@@ -11,7 +11,7 @@ type DescriptionModalProps = {
   onSave: (description: string) => void;
 };
 
-export default function DescriptionModal({ isOpen, onClose, description, onSave }: DescriptionModalProps): JSX.Element {
+export default function DescriptionModal({ isOpen, onClose, description, onSave }: DescriptionModalProps) {
   const {
     register,
     handleSubmit,

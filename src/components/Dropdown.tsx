@@ -15,7 +15,7 @@ type DropdownProps = {
   className?: string;
 };
 
-export default function Dropdown({ options, actionIcon, align = 'end', className = '' }: DropdownProps): JSX.Element {
+export default function Dropdown({ options, actionIcon, align = 'end', className = '' }: DropdownProps) {
   const handleOptionClick = (onClick: () => void): void => {
     onClick();
     if (document.activeElement instanceof HTMLElement) {

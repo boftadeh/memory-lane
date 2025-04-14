@@ -8,7 +8,7 @@ type ModalProps = {
   children: ReactNode;
 };
 
-export default function Modal({ isOpen, onClose, title, subTitle, children }: ModalProps): JSX.Element | null {
+export default function Modal({ isOpen, onClose, title, subTitle, children }: ModalProps) {
   if (!isOpen) return null;
 
   return (

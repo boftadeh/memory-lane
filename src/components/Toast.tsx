@@ -12,7 +12,7 @@ export interface ToastProps {
   onClose: () => void;
 }
 
-export default function Toast({ message, type = 'success', duration = 3000, onClose }: ToastProps): JSX.Element | null {
+export default function Toast({ message, type = 'success', duration = 3000, onClose }: ToastProps) {
   const [isVisible, setIsVisible] = useState(true);
   const [isExiting, setIsExiting] = useState(false);
 

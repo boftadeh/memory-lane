@@ -1,4 +1,4 @@
-export default function MemorySkeleton(): JSX.Element {
+export default function MemorySkeleton() {
   return (
     <div 
       className="card bg-base-200 shadow-xl w-full min-h-[150px] max-w-2xl animate-pulse"
