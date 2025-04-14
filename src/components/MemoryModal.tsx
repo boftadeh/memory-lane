@@ -144,6 +144,7 @@ export default function MemoryModal({ isOpen, onClose, onSave, memory, mode }: M
                 type="text"
                 className="input w-full text-base-content"
                 placeholder="Enter memory name"
+                maxLength={45}
                 {...register('name')}
               />
               {errors.name && (

@@ -17,6 +17,8 @@ type MemoryListProps = {
   initialMemories: Memory[];
 };
 
+type MemoriesModalMode = 'create' | 'edit';
+
 type SortOrder = 'newest' | 'oldest';
 
 export default function MemoryList({ initialMemories }: MemoryListProps) {
@@ -24,19 +26,16 @@ export default function MemoryList({ initialMemories }: MemoryListProps) {
   const [filteredMemories, setFilteredMemories] = useState<Memory[]>(initialMemories);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedMemory, setSelectedMemory] = useState<Memory | undefined>(undefined);
-  const [modalMode, setModalMode] = useState<'create' | 'edit'>('create');
+  const [modalMode, setModalMode] = useState<MemoriesModalMode>('create');
   const [sortOrder, setSortOrder] = useState<SortOrder>('oldest');
   const [selectedTag, setSelectedTag] = useState<Tag | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isInitialLoad, setIsInitialLoad] = useState(true);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [memoryToDelete, setMemoryToDelete] = useState<Memory | undefined>(undefined);
-  const [isDeletingMemory, setIsDeletingMemory] = useState(false);
   const { showToast } = useToast();
 
   useEffect(() => {
-    let timeoutId: NodeJS.Timeout;
-
     const sortAndFilterMemories = (): void => {
       const sortedMemories = [...memories].sort((a, b) => {
         const dateA = new Date(a.timestamp).getTime();
@@ -52,21 +51,8 @@ export default function MemoryList({ initialMemories }: MemoryListProps) {
       setIsLoading(false);
     };
 
-    const loadMemories = (): void => {
-      setIsLoading(true);
-      timeoutId = setTimeout(() => {
-        sortAndFilterMemories();
-        setIsInitialLoad(false);
-      }, isInitialLoad ? 1000 : 300);
-    };
-
-    loadMemories();
-
-    return () => {
-      if (timeoutId) {
-        clearTimeout(timeoutId);
-      }
-    };
+    sortAndFilterMemories();
+    setIsInitialLoad(false);
   }, [sortOrder, memories, isInitialLoad, selectedTag]);
 
   const handleDeleteClick = (memory: Memory): void => {
@@ -84,7 +70,6 @@ export default function MemoryList({ initialMemories }: MemoryListProps) {
     if (!memoryToDelete?.id) return;
     
     try {
-      setIsDeletingMemory(true);
       setIsLoading(true);
       
       await deleteMemory(memoryToDelete.id);
@@ -99,7 +84,6 @@ export default function MemoryList({ initialMemories }: MemoryListProps) {
     } catch (err) {
       showToast('Failed to delete memory. Please try again.', 'error');
     } finally {
-      setIsDeletingMemory(false);
       setIsLoading(false);
     }
   };
@@ -257,7 +241,7 @@ export default function MemoryList({ initialMemories }: MemoryListProps) {
             setMemoryToDelete(undefined);
           }}
           onConfirm={handleDelete}
-          isDeleting={isDeletingMemory}
+          isDeleting={isLoading}
           memoryName={memoryToDelete?.name || ''}
         />
       </div>

@@ -31,13 +31,13 @@ export default function MemoryCard({ memory, onEdit, onDelete }: MemoryCardProps
   ];
 
   const tags = memory.tags as Tag[] || [];
-  
+
   return (
     <div className="card bg-base-200 shadow-xl w-full min-h-[150px] max-w-2xl relative">
       {tags.length > 0 && (
         <div className="absolute -top-3 -right-2 flex gap-2 flex-wrap justify-end">
           {tags.map((tag) => (
-            <div 
+            <div
               key={tag}
               className="badge badge-soft badge-primary"
             >
@@ -50,9 +50,9 @@ export default function MemoryCard({ memory, onEdit, onDelete }: MemoryCardProps
         <div className="flex items-start gap-4">
           <div className="avatar flex-shrink-0">
             <div className="w-24 h-24 rounded-full relative">
-              <Image 
-                src={memory.image} 
-                alt={memory.name} 
+              <Image
+                src={memory.image}
+                alt={memory.name}
                 fill
                 className="object-cover rounded-full"
               />
@@ -64,15 +64,14 @@ export default function MemoryCard({ memory, onEdit, onDelete }: MemoryCardProps
                 <h2 className="card-title truncate">{memory.name}</h2>
                 <p className="text-sm opacity-70">{formattedDate}</p>
               </div>
-              <div className="flex-shrink-0">
-                <Dropdown
-                  actionIcon={<EllipsisVerticalIcon className="h-6 w-6" />}
-                  options={dropdownOptions}
-                />
-              </div>
+
             </div>
-            <p className="mt-2 line-clamp-3">{memory.description}</p>
+            <p className="mt-2 line-clamp-6">{memory.description}</p>
           </div>
+          <Dropdown
+            actionIcon={<EllipsisVerticalIcon className="h-6 w-6" />}
+            options={dropdownOptions}
+          />
         </div>
       </div>
     </div>

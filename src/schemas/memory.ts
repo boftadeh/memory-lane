@@ -2,7 +2,9 @@ import { z } from 'zod';
 
 export const MemorySchema = z.object({
   id: z.number().optional(),
-  name: z.string().min(1, 'Name is required'),
+  name: z.string()
+    .min(1, 'Name is required')
+    .max(45, 'Name cannot exceed 45 characters'),
   description: z.string()
     .min(1, 'Description is required')
     .max(700, 'Description cannot exceed 700 characters'),
