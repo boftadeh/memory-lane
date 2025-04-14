@@ -133,6 +133,7 @@ export default function MemoryList({ initialMemories }: MemoryListProps) {
         <button
           className="flex items-center btn btn-outline btn-primary md:ml-auto"
           onClick={handleCreateClick}
+          data-test-id="new-memory-button"
         >
           <PlusIcon className="w-5 h-5" />
           New memory

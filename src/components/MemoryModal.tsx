@@ -144,6 +144,7 @@ export default function MemoryModal({ isOpen, onClose, onSave, memory, mode }: M
                 className="input w-full text-base-content"
                 placeholder="Enter memory name"
                 maxLength={45}
+                data-test-id="memory-name-input"
                 {...register('name')}
               />
               {errors.name && (
@@ -157,6 +158,7 @@ export default function MemoryModal({ isOpen, onClose, onSave, memory, mode }: M
                 className="textarea h-24 resize-none w-full text-base-content"
                 placeholder="Enter memory description"
                 maxLength={700}
+                data-test-id="memory-description-input"
                 {...register('description')}
               />
               {errors.description && (
@@ -169,6 +171,7 @@ export default function MemoryModal({ isOpen, onClose, onSave, memory, mode }: M
               <input
                 type="date"
                 className="input w-full text-base-content"
+                data-test-id="memory-date-input"
                 {...register('timestamp')}
                 max={new Date().toISOString().split('T')[0]}
               />
@@ -282,6 +285,7 @@ export default function MemoryModal({ isOpen, onClose, onSave, memory, mode }: M
           <button 
             type="submit" 
             className="btn btn-primary"
+            data-test-id="memory-submit-button"
             disabled={isSubmitting}
           >
             {isSubmitting ? (

@@ -33,7 +33,8 @@ export default function MemoryCard({ memory, onEdit, onDelete }: MemoryCardProps
   const tags = memory.tags as Tag[] || [];
 
   return (
-    <div className="card bg-base-200 shadow-xl w-full min-h-[150px] max-w-2xl relative">
+    <div className="card bg-base-200 shadow-xl w-full min-h-[150px] max-w-2xl relative"
+         data-test-id={`memory-card-${memory.name.toLowerCase().replace(/\s+/g, '-')}`}>
       {tags.length > 0 && (
         <div className="absolute -top-3 -right-2 flex gap-2 flex-wrap justify-end">
           {tags.map((tag) => (
