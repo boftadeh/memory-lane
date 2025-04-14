@@ -1,20 +1,16 @@
 import './globals.css';
 
-import { type Metadata } from 'next';
 import { Inter } from 'next/font/google';
-
 import { ToastProvider } from '@/context/ToastContext';
+import { metadata } from './metadata';
 
 const inter = Inter({ subsets: ['latin'] });
-
-export const metadata: Metadata = {
-  title: 'Memory Lane',
-  description: 'A place to store your memories',
-};
 
 interface RootLayoutProps {
   children: React.ReactNode;
 }
+
+export { metadata };
 
 export default function RootLayout({
   children,

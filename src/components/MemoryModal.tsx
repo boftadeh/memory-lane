@@ -3,7 +3,7 @@ import { XMarkIcon } from '@heroicons/react/24/outline';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { useToast } from '@/context/ToastContext';
+import { useToast } from '@/context/useToast';
 import { createMemory, updateMemory } from '@/app/actions';
 import { Memory, MemorySchema } from '@/schemas/memory';
 import { AVAILABLE_TAGS, Tag } from '@/types/tags';
@@ -28,7 +28,6 @@ export default function MemoryModal({ isOpen, onClose, onSave, memory, mode }: M
     handleSubmit, 
     reset, 
     formState: { errors, isSubmitting },
-    setError,
     setValue,
     clearErrors
   } = useForm<Memory>({

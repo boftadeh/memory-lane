@@ -1,24 +1,11 @@
 'use client';
 
-import { createContext, type ReactNode, useContext, useState } from 'react';
+import { createContext, useState } from 'react';
+import Toast from '@/components/Toast';
+import type { ToastType } from '@/components/Toast';
+import type { ToastContextType, ToastState, ToastProviderProps } from './toast-utils';
 
-import Toast, { type ToastType } from '@/components/Toast';
-
-interface ToastContextType {
-  showToast: (message: string, type?: ToastType) => void;
-}
-
-interface ToastState {
-  message: string;
-  type: ToastType;
-  id: number;
-}
-
-interface ToastProviderProps {
-  children: ReactNode;
-}
-
-const ToastContext = createContext<ToastContextType | undefined>(undefined);
+export const ToastContext = createContext<ToastContextType | undefined>(undefined);
 
 export function ToastProvider({ children }: ToastProviderProps): JSX.Element {
   const [toast, setToast] = useState<ToastState | null>(null);
@@ -46,11 +33,3 @@ export function ToastProvider({ children }: ToastProviderProps): JSX.Element {
     </ToastContext.Provider>
   );
 }
-
-export function useToast(): ToastContextType {
-  const context = useContext(ToastContext);
-  if (context === undefined) {
-    throw new Error('useToast must be used within a ToastProvider');
-  }
-  return context;
-} 

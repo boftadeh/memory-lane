@@ -4,7 +4,7 @@ import { PlusIcon } from '@heroicons/react/24/solid';
 import { useEffect, useState } from 'react';
 
 import { refreshMemories, deleteMemory, getMemories } from '@/app/actions';
-import { useToast } from '@/context/ToastContext';
+import { useToast } from '@/context/useToast';
 import { Memory } from '@/schemas/memory';
 import { Tag } from '@/types/tags';
 import DeleteConfirmationModal from './DeleteConfirmationModal';

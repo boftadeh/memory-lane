@@ -2,12 +2,11 @@
 
 import { CubeIcon, EllipsisVerticalIcon, PencilIcon, ShareIcon } from '@heroicons/react/24/outline';
 import { useState } from 'react';
-import { useToast } from '@/context/ToastContext';
+import { useToast } from '@/context/useToast';
 import DescriptionModal from './DescriptionModal';
 import Dropdown from './Dropdown';
 
-const DEFAULT_DESCRIPTION = "Jae Doe's journey has been a tapestry of curiosity and exploration. From a young age, their inquisitive mind led them through diverse interests. Education shaped their multidisciplinary perspective, while personal experiences added depth and resilience to their story.";
-
+const DEFAULT_DESCRIPTION = "Jae Doe&apos;s journey has been a tapestry of curiosity and exploration. From a young age, their inquisitive mind led them through diverse interests. Education shaped their multidisciplinary perspective, while personal experiences added depth and resilience to their story.";
 export default function Header(): JSX.Element {
   const [isEditingDescription, setIsEditingDescription] = useState(false);
   const [description, setDescription] = useState(DEFAULT_DESCRIPTION);
