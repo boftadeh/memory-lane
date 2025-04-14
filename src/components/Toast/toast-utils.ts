@@ -1,5 +1,5 @@
 import { type ReactNode } from 'react';
-import { type ToastType } from '@/components/Toast';
+import { type ToastType } from '@/components/Toast/Toast';
 
 export interface ToastContextType {
   showToast: (message: string, type?: ToastType) => void;

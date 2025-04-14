@@ -2,7 +2,7 @@
 
 import { CubeIcon, EllipsisVerticalIcon, PencilIcon, ShareIcon } from '@heroicons/react/24/outline';
 import { useState } from 'react';
-import { useToast } from '@/context/useToast';
+import { useToast } from '@/components/Toast/useToast';
 import DescriptionModal from './DescriptionModal';
 import Dropdown from './Dropdown';
 

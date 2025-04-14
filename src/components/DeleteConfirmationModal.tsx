@@ -1,5 +1,5 @@
 import Modal from './Modal';
-import { useToast } from '@/context/useToast';
+import { useToast } from '@/components/Toast/useToast';
 
 type DeleteConfirmationModalProps = {
   isOpen: boolean;

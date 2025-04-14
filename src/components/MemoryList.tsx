@@ -4,7 +4,7 @@ import { PlusIcon } from '@heroicons/react/24/solid';
 import { useMemo, useState } from 'react';
 
 import { refreshMemories, deleteMemory, getMemories } from '@/app/actions';
-import { useToast } from '@/context/useToast';
+import { useToast } from '@/components/Toast/useToast';
 import { Memory } from '@/schemas/memory';
 import { Tag } from '@/types/tags';
 import DeleteConfirmationModal from './DeleteConfirmationModal';
@@ -110,7 +110,7 @@ export default function MemoryList({ initialMemories }: MemoryListProps) {
     setSelectedTag(tag);
   }
 
-  function renderHeader() {
+  function renderActionButtons() {
     return (
       <div className="flex flex-col-reverse justify-start md:justify-between md:flex-row gap-4">
         {memories.length > 0 && (
@@ -160,23 +160,35 @@ export default function MemoryList({ initialMemories }: MemoryListProps) {
     );
   }
 
-  const renderModal = () => (
-    <MemoryModal
-      isOpen={isModalOpen}
-      onClose={() => setIsModalOpen(false)}
-      onSave={handleMemoryUpdated}
-      memory={selectedMemory}
-      mode={modalMode}
-    />
+  const renderModals = () => (
+    <>
+      <MemoryModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        onSave={handleMemoryUpdated}
+        memory={selectedMemory}
+        mode={modalMode}
+      />
+      <DeleteConfirmationModal
+        isOpen={isDeleteModalOpen}
+        onClose={() => {
+          setIsDeleteModalOpen(false);
+          setMemoryToDelete(undefined);
+        }}
+        onConfirm={handleDelete}
+        isDeleting={isLoading}
+        memoryName={memoryToDelete?.name || ''}
+      />
+    </>
   );
 
   if (isLoading) {
     return (
       <div className="container mx-auto px-4 py-8">
         <div className="flex flex-col gap-4 max-w-4xl mx-auto">
-          {renderHeader()}
+          {renderActionButtons()}
           {renderSkeletons()}
-          {renderModal()}
+          {renderModals()}
         </div>
       </div>
     );
@@ -186,7 +198,7 @@ export default function MemoryList({ initialMemories }: MemoryListProps) {
     return (
       <div className="container mx-auto px-4 py-8">
         <div className="flex flex-col gap-4 max-w-4xl mx-auto">
-          {renderHeader()}
+          {renderActionButtons()}
           <div className="alert">
             <span>
               {selectedTag
@@ -194,7 +206,7 @@ export default function MemoryList({ initialMemories }: MemoryListProps) {
                 : 'No memories found. Create your first memory!'}
             </span>
           </div>
-          {renderModal()}
+          {renderModals()}
         </div>
       </div>
     );
@@ -203,7 +215,7 @@ export default function MemoryList({ initialMemories }: MemoryListProps) {
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="flex flex-col gap-4 max-w-4xl mx-auto">
-        {renderHeader()}
+        {renderActionButtons()}
         {filteredMemories.map((memory, index) => (
           <div key={memory.id} className="flex flex-col items-center mt-4">
             <MemoryCard
@@ -220,17 +232,7 @@ export default function MemoryList({ initialMemories }: MemoryListProps) {
             )}
           </div>
         ))}
-        {renderModal()}
-        <DeleteConfirmationModal
-          isOpen={isDeleteModalOpen}
-          onClose={() => {
-            setIsDeleteModalOpen(false);
-            setMemoryToDelete(undefined);
-          }}
-          onConfirm={handleDelete}
-          isDeleting={isLoading}
-          memoryName={memoryToDelete?.name || ''}
-        />
+        {renderModals()}
       </div>
     </div>
   );

@@ -1,8 +1,8 @@
 'use client';
 
 import { createContext, useState } from 'react';
-import Toast from '@/components/Toast';
-import type { ToastType } from '@/components/Toast';
+import Toast from '@/components/Toast/Toast';
+import type { ToastType } from '@/components/Toast/Toast';
 import type { ToastContextType, ToastState, ToastProviderProps } from './toast-utils';
 
 export const ToastContext = createContext<ToastContextType | undefined>(undefined);
