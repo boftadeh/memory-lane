@@ -66,7 +66,7 @@ export default function Header(): JSX.Element {
                 options={dropdownOptions}
               />
             </div>
-            <p className="text-base-content/70 pr-12">{description}</p>
+            <p className="text-base-content/70 pr-12 break-words">{description}</p>
           </div>
         </div>
       </div>

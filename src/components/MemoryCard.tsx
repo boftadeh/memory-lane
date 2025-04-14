@@ -66,7 +66,7 @@ export default function MemoryCard({ memory, onEdit, onDelete }: MemoryCardProps
               </div>
 
             </div>
-            <p className="mt-2 line-clamp-6">{memory.description}</p>
+            <p className="mt-2 line-clamp-6 break-words">{memory.description}</p>
           </div>
           <Dropdown
             actionIcon={<EllipsisVerticalIcon className="h-6 w-6" />}

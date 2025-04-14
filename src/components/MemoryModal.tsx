@@ -243,11 +243,11 @@ export default function MemoryModal({ isOpen, onClose, onSave, memory, mode }: M
                     ))}
                 </select>
                 {selectedTags.length > 0 && (
-                  <div className="flex flex-wrap gap-2 mt-2">
+                  <div className="flex flex-wrap gap-2">
                     {selectedTags.map((tag) => (
                       <div 
                         key={tag}
-                        className="badge badge-soft badge-primary gap-1 cursor-pointer"
+                        className="badge badge-soft badge-primary gap-1 cursor-pointer mt-1"
                         onClick={() => removeTag(tag)}
                       >
                         <span className="capitalize">{tag}</span>

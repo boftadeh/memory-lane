@@ -124,6 +124,8 @@ export default function MemoryList({ initialMemories }: MemoryListProps) {
 
   const renderHeader = (): JSX.Element => (
     <div className="flex flex-col-reverse justify-start md:justify-between md:flex-row gap-4">
+      { memories.length > 0 && (
+        <>
       <select
         className="select select-bordered w-full md:w-[200px]"
         value={sortOrder}
@@ -137,8 +139,11 @@ export default function MemoryList({ initialMemories }: MemoryListProps) {
         onChange={handleTagChange}
         className="order-first md:order-none flex-shrink-0 mr-auto"
       />
+        </>
+      )
+      }
       <button 
-        className="flex items-center btn btn-outline btn-primary"
+        className="flex items-center btn btn-outline btn-primary md:ml-auto"
         onClick={handleCreateClick}
       >
         <PlusIcon className="w-5 h-5" />
