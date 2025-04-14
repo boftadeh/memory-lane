@@ -36,7 +36,7 @@ export default function DeleteConfirmationModal({
       <div className="modal-action">
         <button
           type="button"
-          className="btn btn-ghost"
+          className="btn"
           onClick={onClose}
           disabled={isDeleting}
         >

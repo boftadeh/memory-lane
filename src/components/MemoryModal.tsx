@@ -7,7 +7,6 @@ import { useForm } from 'react-hook-form';
 import { Memory, MemorySchema } from '@/schemas/memory';
 import { AVAILABLE_TAGS, Tag } from '@/types/tags';
 import Modal from './Modal';
-import TagSelector from './TagSelector';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
 
