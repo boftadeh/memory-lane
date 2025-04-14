@@ -3,12 +3,11 @@ import { XMarkIcon } from '@heroicons/react/24/outline';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
-
+import { useToast } from '@/context/ToastContext';
+import { createMemory, updateMemory } from '@/app/actions';
 import { Memory, MemorySchema } from '@/schemas/memory';
 import { AVAILABLE_TAGS, Tag } from '@/types/tags';
 import Modal from './Modal';
-
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
 
 type MemoryModalProps = {
   isOpen: boolean;
@@ -22,7 +21,8 @@ export default function MemoryModal({ isOpen, onClose, onSave, memory, mode }: M
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [showFileInput, setShowFileInput] = useState(true);
   const [selectedTags, setSelectedTags] = useState<Tag[]>([]);
-  
+  const { showToast } = useToast();
+
   const { 
     register, 
     handleSubmit, 
@@ -70,7 +70,7 @@ export default function MemoryModal({ isOpen, onClose, onSave, memory, mode }: M
     }
   }, [memory, isOpen, reset]);
 
-  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
+  const handleImagePreview = (e: React.ChangeEvent<HTMLInputElement>): void => {
     const file = e.target.files?.[0];
     if (file) {
       const reader = new FileReader();
@@ -106,38 +106,20 @@ export default function MemoryModal({ isOpen, onClose, onSave, memory, mode }: M
 
   const onSubmit = async (data: Memory): Promise<void> => {
     try {
-      const date = new Date(data.timestamp);
-      const adjustedDate = new Date(date.getTime() + date.getTimezoneOffset() * 60000);
-      
       const memoryData = {
         ...data,
-        timestamp: adjustedDate.toISOString(),
         tags: selectedTags,
       };
-
-      const url = mode === 'create' 
-        ? `${API_URL}/memories`
-        : `${API_URL}/memories/${memory?.id}`;
-      
-      const response = await fetch(url, {
-        method: mode === 'create' ? 'POST' : 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(memoryData),
-      });
-
-      if (!response.ok) {
-        throw new Error(`Failed to ${mode} memory`);
+      if(mode === 'create') {
+        await createMemory(memoryData)
+      } else {
+        await updateMemory(memory?.id || 0, memoryData);
       }
 
       onSave();
       onClose();
     } catch (err) {
-      setError('root', {
-        type: 'manual',
-        message: err instanceof Error ? err.message : 'An unknown error occurred'
-      });
+      showToast('Failed to save memory. Please try again.', 'error');
     }
   };
 
@@ -203,7 +185,7 @@ export default function MemoryModal({ isOpen, onClose, onSave, memory, mode }: M
                     type="file"
                     className="file-input w-full text-base-content"
                     accept="image/*"
-                    onChange={handleImageChange}
+                    onChange={handleImagePreview}
                   />
                   {errors.image && (
                     <p className="text-error text-sm mt-1">{errors.image.message}</p>
