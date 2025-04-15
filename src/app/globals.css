@@ -1,3 +1,11 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities; 
+
+:root {
+  scrollbar-gutter: auto !important;
+}
+
+.modal:open {
+  scrollbar-width: auto !important;
+} 
