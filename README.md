@@ -89,3 +89,7 @@ Additional test commands:
 - `/tests`: Test files
   - `/playwright`: End-to-end tests
 - `api.js`: Backend API server
+
+## Application Preview
+
+![Memory Lane Application](./memory_lane.png)

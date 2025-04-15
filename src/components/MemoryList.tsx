@@ -113,23 +113,19 @@ export default function MemoryList({ initialMemories }: MemoryListProps) {
   function renderActionButtons() {
     return (
       <div className="flex flex-col-reverse justify-start md:justify-between md:flex-row gap-4">
-        {memories.length > 0 && (
-          <>
-            <select
-              className="select select-bordered w-full md:w-[200px]"
-              value={sortOrder}
-              onChange={handleSortChange}
-            >
-              <option value="oldest">Oldest to Newest</option>
-              <option value="newest">Newest to Oldest</option>
-            </select>
-            <TagSelector
-              selectedTag={selectedTag}
-              onChange={handleTagChange}
-              className="order-first md:order-none flex-shrink-0 mr-auto"
-            />
-          </>
-        )}
+        <select
+          className="select select-bordered w-full md:w-[200px]"
+          value={sortOrder}
+          onChange={handleSortChange}
+        >
+          <option value="oldest">Oldest to Newest</option>
+          <option value="newest">Newest to Oldest</option>
+        </select>
+        <TagSelector
+          selectedTag={selectedTag}
+          onChange={handleTagChange}
+          className="order-first md:order-none flex-shrink-0 mr-auto"
+        />
         <button
           className="flex items-center btn btn-outline btn-primary md:ml-auto"
           onClick={handleCreateClick}
