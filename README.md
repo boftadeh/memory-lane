@@ -92,4 +92,4 @@ Additional test commands:
 
 ## Application Preview
 
-![Memory Lane Application](./memory_lane.png)
+![Memory Lane Application](./memory_lane_final.png)
