@@ -25,3 +25,24 @@ dist-ssr
 
 *.db
 *.sqlite
+
+# Next.js
+.next/
+out/
+build/
+
+# Vercel
+.vercel
+
+# Local env files
+.env*.local
+
+# Playwright
+/test-results/
+/playwright-report/
+/blob-report/
+/playwright/.cache/
+/tests/fixtures/**/*.jpg
+/tests/fixtures/**/*.png
+/tests/fixtures/**/*.gif
+/tests-examples/

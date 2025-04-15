@@ -3,33 +3,47 @@
   "private": true,
   "version": "0.0.0",
   "scripts": {
-    "dev": "vite",
-    "build": "tsc && vite build",
-    "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
-    "preview": "vite preview",
-    "serve:api": "nodemon api.js"
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "serve:api": "nodemon api.js",
+    "test:e2e": "playwright test",
+    "test:e2e:ui": "playwright test --ui",
+    "test:e2e:debug": "playwright test --debug"
   },
   "dependencies": {
     "@heroicons/react": "^2.0.18",
+    "@hookform/resolvers": "^5.0.1",
+    "cors": "^2.8.5",
+    "daisyui": "^5.0.19",
     "express": "^4.18.2",
+    "next": "^15.0.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "sqlite3": "^5.1.6"
+    "react-hook-form": "^7.55.0",
+    "sqlite3": "^5.1.6",
+    "zod": "^3.24.2"
   },
   "devDependencies": {
+    "@playwright/test": "^1.51.1",
+    "@types/node": "^20.0.0",
     "@types/react": "^18.2.15",
     "@types/react-dom": "^18.2.7",
     "@typescript-eslint/eslint-plugin": "^6.0.0",
     "@typescript-eslint/parser": "^6.0.0",
-    "@vitejs/plugin-react": "^4.0.3",
     "autoprefixer": "^10.4.15",
     "eslint": "^8.45.0",
+    "eslint-config-next": "^15.0.0",
+    "eslint-import-resolver-typescript": "^4.3.2",
+    "eslint-plugin-import": "^2.31.0",
+    "eslint-plugin-jsx-a11y": "^6.10.2",
+    "eslint-plugin-react": "^7.37.5",
     "eslint-plugin-react-hooks": "^4.6.0",
-    "eslint-plugin-react-refresh": "^0.4.3",
+    "eslint-plugin-react-refresh": "^0.4.19",
     "nodemon": "^3.0.1",
     "postcss": "^8.4.28",
     "tailwindcss": "^3.3.3",
-    "typescript": "^5.0.2",
-    "vite": "^4.4.5"
+    "typescript": "^5.0.2"
   }
 }

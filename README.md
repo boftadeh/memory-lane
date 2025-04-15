@@ -1,28 +1,95 @@
-# Planned coding challenge: Memory lane
+# Memory Lane
 
-**Please avoid initiating pull requests on this repository or forking this repository. To submit your solution, either set up a repository on your own account or forward a zip file to the appropriate contact within our talent team.**
+Memory Lane is a web application that allows you to capture, organize, and revisit your important moments. This application enables you to store and manage your memories in a single place with a clean, intuitive interface.
 
-### Problem definition
+## Features
 
-After a series of discovery calls we found out a problem that our users are facing. They are having a hard time sharing their memories with friends and family. They are using a combination of social media, messaging apps, and email to share their memories. They are looking for a solution that allows them to store and share their memories in a single place.
+- **Create Memories**: Save important moments with titles, descriptions, timestamps, and images
+- **Memory Management**: View, edit, and delete your stored memories
+- **Description Support**: Add detailed descriptions to provide context for your memories
+- **Tagging System**: Organize memories with tags (cooking, traveling, outdoors)
+- **Filtering**: Filter memories by tags to find specific moments quickly
+- **Sorting**: Sort memories by newest or oldest first
+- **Responsive Design**: Works seamlessly on both desktop and mobile devices
 
-As a first iteration for this solution, we want to build a web application that allows users to create a memory lane and share it with friends and family. A memory lane is a collection of events that happened in a chronological order. Each event consists of a title, a description, a timestamp, and at least one image.
+## Setup Instructions
 
-## Deliverables
+### Prerequisites
 
-- Clone this repository and create a new branch with your name. Open a pull request on your own instance of the repository.
-- An updated README providing a high level explanation of your implementation.
-- **Screenshots or a short video/gif** showing your UI implementation.
-- Update the API to accommodate for your technical design. Run the API by using `npm run serve:api`.
-- The provided mockup is only for reference and inspiration. Feel free to improve it!
+- Node.js (v14 or higher)
+- npm or yarn
 
-### FAQ
+### Installation
 
-- **Can I add a framework like Next?** If you have the time, go for it, we want to see you use your favorite tools.
-- **Is user authentication required?** No, it is not required.
-- **Can I use a component library?** Yes, you can use a component library.
-- **What will you be looking for?** Good user experience, reusable code, and a well thought out technical design.
+1. Clone the repository
+2. Install dependencies:
+   ```
+   npm install
+   ```
+3. Set up environment variables:
+   - Create a `.env.local` file in the root directory
+   - Copy the contents from `.env.example` into `.env.local`
+   - The default configuration should look like:
+     ```
+     NEXT_PUBLIC_API_URL=http://localhost:4001
+     ```
 
-### Inspiration mockup
+### Running the Application
 
-![Memory lane mockup](./memory_lane.png)
+#### Start the Backend API
+
+```
+npm run serve:api
+```
+
+The API server will run on port 4001.
+
+#### Start the Frontend Development Server
+
+In a separate terminal:
+
+```
+npm run dev
+```
+
+The frontend application will be available at http://localhost:3000
+
+### Running Tests
+
+#### End-to-End Tests
+
+1. Start the backend API in one terminal:
+   ```
+   npm run serve:api
+   ```
+
+2. Run the tests in another terminal:
+   ```
+   npm run test:e2e
+   ```
+
+Additional test commands:
+- Run tests with UI: `npm run test:e2e:ui`
+- Run tests in debug mode: `npm run test:e2e:debug`
+
+## Tech Stack
+
+- **Frontend**: Next.js, React, Tailwind CSS, DaisyUI
+- **Backend**: Express.js, SQLite
+- **Testing**: Playwright
+- **Form Validation**: React Hook Form, Zod
+
+## Project Structure
+
+- `/src`: Frontend application code
+  - `/app`: Next.js app directory
+  - `/components`: React components
+  - `/schemas`: Zod schemas for validation
+  - `/types`: TypeScript type definitions
+- `/tests`: Test files
+  - `/playwright`: End-to-end tests
+- `api.js`: Backend API server
+
+## Application Preview
+
+![Memory Lane Application](./memory_lane.png)
