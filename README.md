@@ -26,6 +26,13 @@ Memory Lane is a web application that allows you to capture, organize, and revis
    ```
    npm install
    ```
+3. Set up environment variables:
+   - Create a `.env.local` file in the root directory
+   - Copy the contents from `.env.example` into `.env.local`
+   - The default configuration should look like:
+     ```
+     NEXT_PUBLIC_API_URL=http://localhost:4001
+     ```
 
 ### Running the Application
 
