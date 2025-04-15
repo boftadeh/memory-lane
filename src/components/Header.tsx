@@ -6,7 +6,7 @@ import { useToast } from '@/components/Toast/useToast';
 import DescriptionModal from './DescriptionModal';
 import Dropdown from './Dropdown';
 
-const DEFAULT_DESCRIPTION = "Jae Doe&apos;s journey has been a tapestry of curiosity and exploration. From a young age, their inquisitive mind led them through diverse interests. Education shaped their multidisciplinary perspective, while personal experiences added depth and resilience to their story.";
+const DEFAULT_DESCRIPTION = "Jae Doe's journey has been a tapestry of curiosity and exploration. From a young age, their inquisitive mind led them through diverse interests. Education shaped their multidisciplinary perspective, while personal experiences added depth and resilience to their story.";
 export default function Header() {
   const [isEditingDescription, setIsEditingDescription] = useState(false);
   const [description, setDescription] = useState(DEFAULT_DESCRIPTION);
@@ -46,7 +46,7 @@ export default function Header() {
             <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center">
               <CubeIcon className="w-12 h-12 text-primary" aria-hidden="true" />
             </div>
-            <h1 className="text-3xl font-bold">Jae's memory lane</h1>
+            <h1 className="text-3xl font-bold">Jae&apos;s memory lane</h1>
           </div>
           <button 
             className="btn btn-ghost btn-circle" 
