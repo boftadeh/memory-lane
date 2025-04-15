@@ -1,6 +1,6 @@
 'use client';
 
-import { CubeIcon, EllipsisVerticalIcon, PencilIcon, ShareIcon } from '@heroicons/react/24/outline';
+import { CubeIcon, EllipsisVerticalIcon, ShareIcon } from '@heroicons/react/24/outline';
 import { useState } from 'react';
 import { useToast } from '@/components/Toast/useToast';
 import DescriptionModal from './DescriptionModal';
@@ -33,7 +33,6 @@ export default function Header() {
   const dropdownOptions = [
     {
       label: 'Edit Description',
-      labelIcon: <PencilIcon className="h-6 w-6" aria-hidden="true" />,
       onClick: handleEditClick
     }
   ];
