@@ -120,11 +120,21 @@ app.post('/memories', (req, res) => {
             }
           })
         }
-        tagStmt.finalize()
-      }
 
-      db.run('COMMIT')
-      res.status(201).json({ message: 'Memory created successfully', id: memoryId })
+        tagStmt.finalize((err) => {
+          if (err) {
+            db.run('ROLLBACK')
+            res.status(500).json({ error: err.message })
+            return
+          }
+
+          db.run('COMMIT')
+          res.status(201).json({ message: 'Memory created successfully', id: memoryId })
+        })
+      } else {
+        db.run('COMMIT')
+        res.status(201).json({ message: 'Memory created successfully', id: memoryId })
+      }
     })
   })
 })
@@ -197,11 +207,21 @@ app.put('/memories/:id', (req, res) => {
               }
             })
           }
-          tagStmt.finalize()
-        }
 
-        db.run('COMMIT')
-        res.json({ message: 'Memory updated successfully' })
+          tagStmt.finalize((err) => {
+            if (err) {
+              db.run('ROLLBACK')
+              res.status(500).json({ error: err.message })
+              return
+            }
+
+            db.run('COMMIT')
+            res.json({ message: 'Memory updated successfully' })
+          })
+        } else {
+          db.run('COMMIT')
+          res.json({ message: 'Memory updated successfully' })
+        }
       })
     })
   })
