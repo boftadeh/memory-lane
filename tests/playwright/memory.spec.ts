@@ -30,7 +30,6 @@ test.describe('Memory Creation', () => {
     const successToast = page.getByText('Memory created successfully');
     await expect(successToast).toBeVisible();
     
-    await page.goto('/');
     await expect(page.getByRole('heading', { name: memoryName })).toBeVisible();
     
     await expect(page.locator('.badge', { hasText: 'cooking' })).toBeVisible();
@@ -61,7 +60,6 @@ test.describe('Memory Editing', () => {
     await page.click('[data-test-id="memory-submit-button"]');
     
     await expect(page.getByText('Memory created successfully')).toBeVisible();
-    await page.goto('/');
     
     const memoryCardId = `memory-card-${originalName.toLowerCase().replace(/\s+/g, '-')}`;
     const memoryCard = page.locator(`[data-test-id="${memoryCardId}"]`);
@@ -84,7 +82,6 @@ test.describe('Memory Editing', () => {
     await page.click('[data-test-id="memory-submit-button"]');
     
     await expect(page.getByText('Memory updated successfully')).toBeVisible();
-    await page.goto('/');
     
     await expect(page.getByRole('heading', { name: updatedName })).toBeVisible();
     await expect(page.getByText(updatedDescription)).toBeVisible();
@@ -119,7 +116,6 @@ test.describe('Memory Deletion', () => {
     await page.click('[data-test-id="memory-submit-button"]');
     
     await expect(page.getByText('Memory created successfully')).toBeVisible();
-    await page.goto('/');
     
     await expect(page.getByRole('heading', { name: memoryToDelete })).toBeVisible();
     
