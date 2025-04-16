@@ -3,7 +3,7 @@
 import { PlusIcon } from '@heroicons/react/24/solid';
 import { useMemo, useState } from 'react';
 
-import { refreshMemories, deleteMemory, getMemories } from '@/app/actions';
+import { deleteMemory, getMemories } from '@/app/actions';
 import { useToast } from '@/components/Toast/useToast';
 import { Memory } from '@/schemas/memory';
 import { Tag } from '@/types/tags';
@@ -61,7 +61,6 @@ export default function MemoryList({ initialMemories }: MemoryListProps) {
     try {
       setIsLoading(true);
       await deleteMemory(memoryToDelete.id);
-      await refreshMemories();
 
       const updatedMemories = memories.filter(m => m.id !== memoryToDelete.id);
       setMemories(updatedMemories);
@@ -80,7 +79,6 @@ export default function MemoryList({ initialMemories }: MemoryListProps) {
     try {
       setIsModalOpen(false);
       setIsLoading(true);
-      await refreshMemories();
       const updatedMemories = await getMemories();
       setMemories(updatedMemories);
       setSelectedTag(null);
