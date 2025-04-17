@@ -111,20 +111,18 @@ app.post('/memories', (req, res) => {
           'INSERT INTO memory_tags (memory_id, tag_id) SELECT ?, id FROM tags WHERE name = ?'
         )
 
+        let tagError = null
+
         for (const tag of tags) {
           tagStmt.run(memoryId, tag, (err) => {
-            if (err) {
-              db.run('ROLLBACK')
-              res.status(500).json({ error: err.message })
-              return
-            }
+            if (err && !tagError) tagError = err
           })
         }
 
         tagStmt.finalize((err) => {
-          if (err) {
+          if (err || tagError) {
             db.run('ROLLBACK')
-            res.status(500).json({ error: err.message })
+            res.status(500).json({ error: (err || tagError).message })
             return
           }
 
@@ -198,20 +196,18 @@ app.put('/memories/:id', (req, res) => {
             'INSERT INTO memory_tags (memory_id, tag_id) SELECT ?, id FROM tags WHERE name = ?'
           )
 
+          let tagError = null
+
           for (const tag of tags) {
             tagStmt.run(id, tag, (err) => {
-              if (err) {
-                db.run('ROLLBACK')
-                res.status(500).json({ error: err.message })
-                return
-              }
+              if (err && !tagError) tagError = err
             })
           }
 
           tagStmt.finalize((err) => {
-            if (err) {
+            if (err || tagError) {
               db.run('ROLLBACK')
-              res.status(500).json({ error: err.message })
+              res.status(500).json({ error: (err || tagError).message })
               return
             }
 
