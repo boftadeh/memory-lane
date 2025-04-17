@@ -1,5 +1,6 @@
 'use server';
 
+import { revalidatePath } from 'next/cache';
 import { Memory } from '@/schemas/memory';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
@@ -31,6 +32,7 @@ export async function deleteMemory(id: number): Promise<boolean> {
       throw new Error(`Failed to delete memory: ${response.status} ${response.statusText}`);
     }
 
+    revalidatePath('/');
     return true;
   } catch (error) {
     console.error('Error deleting memory:', error);
@@ -60,6 +62,7 @@ export async function createMemory(data: Memory): Promise<boolean> {
       throw new Error(`Failed to create memory: ${response.status} ${response.statusText}`);
     }
 
+    revalidatePath('/');
     return true;
   } catch (error) {
     console.error('Error creating memory:', error);
@@ -89,9 +92,10 @@ export async function updateMemory(id: number, data: Memory): Promise<boolean> {
       throw new Error(`Failed to update memory: ${response.status} ${response.statusText}`);
     }
 
+    revalidatePath('/');
     return true;
   } catch (error) {
     console.error('Error updating memory:', error);
     throw error;
   }
-} 
+}
